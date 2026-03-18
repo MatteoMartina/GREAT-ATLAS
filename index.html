@@ -320,8 +320,54 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opa
 .cite-box{background:var(--ink3);border:1px solid rgba(255,255,255,.07);border-left:3px solid var(--gold-line);border-radius:var(--r);padding:15px 18px;margin-top:1rem;font-family:var(--mono);font-size:12px;color:var(--parch-dim);line-height:1.8;}
 
 ::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--ink);} ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px;}
-@media(max-width:900px){.hero{grid-template-columns:1fr;padding:3rem 1.5rem;}.hero-right{display:none;}.sppanels{grid-template-columns:1fr 1fr;}.drw{width:100%;}.sp-chips{display:none;}}
+@media(max-width:900px){.sppanels{grid-template-columns:1fr 1fr;}.drw{width:100%;}.sp-chips{display:none;}}
 @media(max-width:560px){.sppanels{grid-template-columns:1fr;}}
+
+/* ── MOBILE ─────────────────────────────────────────────── */
+@media(max-width:768px){
+  /* header */
+  .hdr{padding:0 1rem;}
+  .hdr-in{height:56px;}
+  .logo-name{font-size:18px;}
+  .logo-sub{display:none;}
+  .hdr-nav{gap:3px;}
+  .nbtn{font-size:11px;padding:4px 10px;}
+  .sp-chips{display:none;}
+
+  /* hero */
+  .hero{padding:2.5rem 1.2rem 2rem;min-height:auto;}
+  .hero::after{display:none;} /* hide GREAT watermark on mobile */
+  .hero-content{max-width:100%;}
+  .hero-ey{font-size:10px;margin-bottom:.8rem;}
+  .hero-title{font-size:clamp(38px,10vw,56px);margin-bottom:2rem;}
+  .srch-wrap{max-width:100%;}
+  .srch{font-size:14px;padding:12px 80px 12px 38px;}
+  .srch-btn{font-size:10px;padding:6px 12px;}
+  .pills{gap:5px;}
+  .pill{font-size:10px;padding:4px 10px;}
+  .hero-stats{gap:1.5rem;margin-top:2rem;flex-wrap:wrap;}
+  .hstat-n{font-size:28px;}
+  .hstat-l{font-size:9px;}
+
+  /* results */
+  .res-hdr{padding:.8rem 1rem;}
+  .fbar{padding:.8rem 1rem;}
+  .ggrid{padding:0 1rem;grid-template-columns:1fr;}
+  .sp-tabs{padding:.8rem 1rem 0;}
+
+  /* drawer */
+  .drw{width:100%;border-left:none;border-top:1px solid #e5e7eb;}
+  .drw-body{padding:1.5rem 1.2rem 4rem;}
+  .sppanels{grid-template-columns:1fr;}
+  .d-id{font-size:15px;}
+
+  /* about */
+  .about-wrap{padding:3rem 1.2rem 5rem;}
+  .about-title{font-size:clamp(38px,10vw,56px);}
+  .about-grid{grid-template-columns:1fr;}
+  .stage-row{flex-wrap:wrap;}
+  .sp-list{grid-template-columns:1fr;}
+}
 
 /* OVERVIEW EXPRESSION HEATMAP */
 .ovhm-wrap{margin-bottom:4px;}
