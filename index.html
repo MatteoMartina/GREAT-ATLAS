@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GREAT Atlas — Floral Transcriptome</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Instrument+Mono:ital,wght@0,400;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#ffffff;--ink2:#f8f9fb;--ink3:#f0f3f8;--ink4:#e8ecf2;
+  --parchment:#1a202c;--parch-dim:#4a5568;--parch-ghost:rgba(26,32,44,0.04);
+  --sage:#2d7a6f;--sage-dim:rgba(45,122,111,0.08);
+  --gold:#d97706;--gold-dim:rgba(217,119,6,0.08);--gold-line:rgba(217,119,6,0.2);
+  --anther:#f97316;--ovary:#0ea5e9;--style-c:#059669;
+  --up:#06b6d4;--down:#ef4444;
+  --f0:#8b5cf6;--f1:#3b82f6;--f2:#f59e0b;--f3:#ec4899;
+  --r:8px;--r-lg:14px;
+  --mono:'Instrument Mono',monospace;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --ease:cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#ffffff;color:var(--parchment);font-family:var(--sans);font-size:15px;line-height:1.65;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.02;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.98);backdrop-filter:blur(16px);border-bottom:1px solid #e5e7eb;padding:0 2rem;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.hdr-in{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:75px;gap:1.5rem;padding:0;}
+.logo{display:flex;align-items:center;gap:14px;text-decoration:none;color:inherit;cursor:pointer;flex-shrink:0;}
+.logo-mark{width:34px;height:34px;flex-shrink:0;}
+.logo-name{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--parchment);letter-spacing:.04em;display:block;line-height:1.2;}
+.logo-sub{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.12em;text-transform:uppercase;display:block;}
+.hdr-nav{display:flex;align-items:center;gap:5px;}
+.nbtn{font-family:var(--mono);font-size:13px;padding:7px 18px;border-radius:20px;border:1px solid transparent;background:transparent;color:var(--parch-dim);cursor:pointer;transition:all .18s var(--ease);}
+.nbtn:hover{color:var(--parchment);border-color:#e5e7eb;background:#f9fafb;}
+.nbtn.on{color:#fff;border-color:var(--gold);background:var(--gold);}
+.sp-chips{display:flex;gap:4px;}
+.spch{font-family:var(--mono);font-size:11px;padding:5px 13px;border-radius:20px;border:1px solid #e5e7eb;color:var(--parch-dim);transition:all .18s;}
+.spch.on{border-color:var(--sage);color:var(--sage);background:var(--sage-dim);}
+.spch.soon{opacity:.3;cursor:not-allowed;}
+
+/* PAGES */
+.page{display:none;position:relative;z-index:1;}
+.page.on{display:block;animation:rise .3s var(--ease);}
+@keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* HERO — editorial */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+.hero{
+  min-height:calc(100vh - 58px);
+  display:flex;flex-direction:column;justify-content:flex-start;
+  padding:4rem 2rem 2rem 2rem;
+  max-width:1320px;margin:0 auto;
+  position:relative;
+}
+.hero::after{
+  content:'GREAT';
+  position:absolute;right:0;top:50%;transform:translateY(-50%);
+  font-family:var(--serif);font-size:clamp(160px,17vw,240px);font-weight:300;
+  color:transparent;-webkit-text-stroke:1.5px rgba(217,119,6,.22);
+  pointer-events:none;line-height:1;z-index:-1;letter-spacing:-.02em;
+  user-select:none;
+}
+.hero-content{position:relative;z-index:1;max-width:620px;}
+.hero-ey{
+  font-family:var(--mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--sage);margin-bottom:1.4rem;
+  display:flex;align-items:center;gap:12px;
+  opacity:0;animation:fadeUp .5s .05s var(--ease) forwards;
+}
+.hero-ey::before{content:'';width:32px;height:1px;background:var(--sage);}
+.hero-title{
+  font-family:var(--serif);
+  font-size:clamp(58px,7.2vw,106px);
+  font-weight:300;line-height:.96;letter-spacing:-.025em;
+  color:var(--parchment);margin-bottom:2.4rem;
+  opacity:0;animation:fadeUp .65s .12s var(--ease) forwards;
+}
+.hero-title em{font-style:italic;color:var(--gold);}
+
+.hero-sub{
+  font-family:var(--serif);font-size:clamp(18px,1.8vw,22px);
+  font-weight:300;font-style:italic;color:var(--parch-dim);
+  margin-bottom:2rem;
+  opacity:0;animation:fadeUp .6s .32s var(--ease) forwards;
+}
+.srch-wrap{
+  position:relative;max-width:580px;margin-bottom:1.4rem;
+  opacity:0;animation:fadeUp .6s .42s var(--ease) forwards;
+}
+.srch-ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--parch-dim);pointer-events:none;}
+.srch{
+  width:100%;background:#fff;
+  border:1.5px solid #dde3ec;border-radius:3px;
+  color:var(--parchment);font-family:var(--sans);font-size:17px;
+  padding:15px 110px 15px 50px;outline:none;
+  transition:border-color .2s,box-shadow .2s;
+}
+.srch::placeholder{color:#b0b8c8;}
+.srch:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim);}
+.srch-btn{
+  position:absolute;right:7px;top:50%;transform:translateY(-50%);
+  font-family:var(--mono);font-size:12px;letter-spacing:.08em;
+  color:#fff;background:var(--parchment);border:none;
+  border-radius:2px;padding:8px 18px;cursor:pointer;transition:background .2s;
+}
+.srch-btn:hover{background:var(--gold);}
+.pills{
+  display:flex;flex-wrap:wrap;gap:5px;
+  opacity:0;animation:fadeUp .6s .52s var(--ease) forwards;
+}
+.pill{
+  font-family:var(--mono);font-size:12px;padding:6px 16px;
+  border-radius:2px;border:1px solid #dde3ec;
+  color:var(--parch-dim);cursor:pointer;background:transparent;
+  transition:all .16s var(--ease);
+}
+.pill:hover{border-color:var(--parchment);color:var(--parchment);}
+.hero-stats{
+  display:flex;gap:4rem;
+  margin-top:3.5rem;padding-top:2.5rem;border-top:1px solid #edf0f5;
+  opacity:0;animation:fadeUp .6s .62s var(--ease) forwards;
+}
+.hstat-n{font-family:var(--serif);font-size:52px;font-weight:300;letter-spacing:-.02em;color:var(--parchment);line-height:1;display:block;}
+.hstat-l{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--parch-dim);text-transform:uppercase;margin-top:3px;display:block;}
+
+/* SP TABS */
+.sp-tabs{display:flex;gap:6px;padding:1rem 2rem 0;max-width:1320px;margin:0 auto;border-bottom:1px solid #e5e7eb;}
+.sptab{font-family:var(--mono);font-size:11px;padding:7px 16px;border-radius:8px 8px 0 0;border:1px solid transparent;border-bottom:none;background:transparent;color:var(--parch-dim);cursor:pointer;transition:all .18s;position:relative;bottom:-1px;}
+.sptab:hover{color:var(--parchment);background:#f9fafb;}
+.sptab.on{color:var(--gold);background:#ffffff;border-color:#e5e7eb;}
+.sptab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold);}
+.sptab-dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:6px;}
+
+/* RESULTS */
+#page-results{padding-bottom:6rem;}
+.res-hdr{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;max-width:1320px;margin:0 auto;flex-wrap:wrap;gap:.8rem;}
+.res-q{font-family:var(--serif);font-size:21px;font-weight:300;font-style:italic;color:var(--parchment);}
+.res-q span{color:var(--gold);}
+.back-btn{font-family:var(--mono);font-size:11px;color:var(--parch-dim);background:none;border:none;cursor:pointer;padding:4px 0;transition:color .18s;}
+.back-btn:hover{color:var(--parchment);}
+.fcount{font-family:var(--mono);font-size:10px;color:var(--parch-dim);}
+
+/* flower filter bar */
+.fbar{display:flex;align-items:center;gap:1.5rem;padding:.8rem 2rem 1rem;max-width:1320px;margin:0 auto .8rem;border-bottom:1px solid #e5e7eb;flex-wrap:wrap;background:#ffffff;}
+.fsvg-box{width:83px;height:130px;flex-shrink:0;}
+.fsvg-box svg{width:100%;height:100%;overflow:visible;}
+.tp{cursor:pointer;transition:fill .2s,opacity .2s,filter .2s;opacity:.35;}
+.tp:hover{opacity:.85;}
+.tp.sel{opacity:.85;filter:drop-shadow(0 0 6px currentColor);}
+.tp.dim{opacity:.12;}
+.tp-ant{fill:#f97316;} .tp-sty{fill:#059669;} .tp-ov{fill:#0ea5e9;}
+.tlabels{display:flex;flex-direction:column;gap:4px;}
+.tlbl{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--parch-dim);cursor:pointer;transition:color .18s;padding:2px 0;}
+.tlbl:hover,.tlbl.sel{color:var(--parchment);}
+.tlbl.dim{opacity:.3;}
+.tldot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.tlcnt{font-size:9px;opacity:.6;margin-left:3px;}
+.freset{font-family:var(--mono);font-size:9px;color:var(--parch-dim);background:none;border:1px solid #e5e7eb;border-radius:4px;padding:2px 7px;cursor:pointer;transition:all .18s;margin-top:5px;}
+.freset:hover{color:var(--parchment);border-color:#d1d5db;}
+.freset.hide{visibility:hidden;}
+.fright{display:flex;flex-direction:column;gap:8px;margin-left:auto;}
+.fgrp{display:flex;align-items:center;gap:7px;}
+.flbl{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--parch-dim);white-space:nowrap;}
+.ftw{display:flex;gap:3px;}
+.ftgl{font-family:var(--mono);font-size:10px;padding:3px 10px;border-radius:20px;border:1px solid #e5e7eb;background:transparent;color:var(--parch-dim);cursor:pointer;transition:all .16s var(--ease);}
+.ftgl:hover{border-color:#d1d5db;color:var(--parchment);}
+.ftgl.on{background:var(--gold-dim);border-color:var(--gold);color:var(--gold);font-weight:500;}
+
+/* gene grid */
+.ggrid{max-width:1320px;margin:0 auto;padding:0 2rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:9px;}
+.gcard{background:#ffffff;border:1px solid #e5e7eb;border-radius:var(--r-lg);padding:14px 16px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative;overflow:hidden;}
+.gcard::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--parch-ghost),transparent 55%);opacity:0;transition:opacity .2s;}
+.gcard:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 8px 16px rgba(217,119,6,.12);}
+.gcard:hover::after{opacity:1;}
+.gcard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:7px;}
+.gcard-id{font-family:var(--mono);font-size:12px;color:var(--parchment);font-weight:600;}
+.gcard-sp{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:3px;font-weight:500;opacity:.8;}
+.gt-smel{background:rgba(217,119,6,.1);color:var(--gold);}
+.gt-cic{background:rgba(45,179,96,.1);color:#2db360;}
+.gt-cyn{background:rgba(6,182,212,.1);color:#0ea5e9;}
+.tbadge{font-family:var(--mono);font-size:9px;padding:2px 6px;border-radius:20px;font-weight:500;}
+.tb-antera{background:rgba(249,115,22,.1);color:var(--anther);border:1px solid rgba(249,115,22,.2);}
+.tb-ovaio{background:rgba(14,165,233,.1);color:var(--ovary);border:1px solid rgba(14,165,233,.2);}
+.tb-stami,.tb-stigma_stilo{background:rgba(5,150,105,.1);color:var(--style-c);border:1px solid rgba(5,150,105,.2);} 
+.tb-anther{background:rgba(249,115,22,.1);color:var(--anther);border:1px solid rgba(249,115,22,.2);} 
+.tb-ovary{background:rgba(14,165,233,.1);color:var(--ovary);border:1px solid rgba(14,165,233,.2);} 
+.tb-style\+stamen,.tb-style\+stigma{background:rgba(5,150,105,.1);color:var(--style-c);border:1px solid rgba(5,150,105,.2);}
+.gcard-func{font-size:11.5px;color:var(--parch-dim);line-height:1.5;margin-bottom:9px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.gcard-bot{display:flex;gap:4px;flex-wrap:wrap;}
+.mchip{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid #e5e7eb;color:var(--parch-dim);display:flex;align-items:center;gap:3px;background:#f9fafb;}
+.mdot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.dchip{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;}
+.dup{background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);color:var(--up);}
+.ddown{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--down);}
+.cons-badge{font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:4px;background:rgba(45,122,111,.1);border:1px solid rgba(45,122,111,.25);color:var(--sage);display:inline-flex;align-items:center;gap:3px;}
+.smsg{text-align:center;padding:5rem 2rem;font-family:var(--mono);font-size:12px;color:var(--parch-dim);max-width:1320px;margin:0 auto;}
+.spin{width:24px;height:24px;border:2px solid #e5e7eb;border-top-color:var(--gold);border-radius:50%;animation:spn .7s linear infinite;margin:0 auto 1rem;}
+@keyframes spn{to{transform:rotate(360deg);}}
+
+/* DRAWER */
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.40);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;}
+.ovl.on{opacity:1;pointer-events:auto;}
+.drw{position:fixed;top:0;right:0;bottom:0;width:min(780px,95vw);background:#ffffff;border-left:1px solid #e5e7eb;z-index:201;overflow-y:auto;transform:translateX(105%);transition:transform .35s cubic-bezier(.4,0,.2,1);box-shadow:-4px 0 12px rgba(0,0,0,.08);}
+.drw.on{transform:translateX(0);}
+.drw-close{position:sticky;top:1.2rem;float:right;margin:1.2rem 1.2rem 0 0;width:30px;height:30px;border-radius:50%;background:#f3f4f6;border:1px solid #e5e7eb;color:var(--parch-dim);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .18s;z-index:5;}
+.drw-close:hover{color:var(--parchment);border-color:#d1d5db;background:#e5e7eb;}
+.drw-body{padding:2rem 2rem 5rem;clear:both;}
+.d-id{font-family:var(--mono);font-size:18px;color:var(--parchment);margin-bottom:5px;font-weight:600;}
+.d-sp{font-family:var(--mono);font-size:10px;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:10px;font-weight:500;}
+.d-func{font-family:var(--serif);font-size:15px;font-style:italic;color:var(--parch-dim);line-height:1.6;margin-bottom:1.8rem;}
+.d-sec{margin-bottom:2rem;}
+.d-stitle{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);display:flex;align-items:center;gap:8px;margin-bottom:.9rem;}
+.d-stitle::after{content:'';flex:1;height:1px;background:rgba(201,168,76,.15);}
+/* GO term pills */
+.go-cats{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.8rem;}
+.go-pill{position:relative;display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:10px;padding:4px 10px;border-radius:20px;cursor:default;user-select:none;transition:all .18s;}
+.go-pill:hover .go-drop{opacity:1;pointer-events:auto;transform:translateY(0);}
+.go-drop{position:absolute;top:calc(100% + 6px);left:0;min-width:220px;max-width:340px;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:10px 12px;z-index:300;opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity .18s,transform .18s;}
+.go-drop-title{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;opacity:.5;}
+.go-term{font-family:var(--sans);font-size:11px;color:var(--parchment);line-height:1.5;padding:2px 0;border-bottom:1px solid #f3f4f6;}
+.go-term:last-child{border-bottom:none;}
+.go-bp{background:rgba(16,185,129,.1);color:#059669;border:1px solid rgba(16,185,129,.25);}
+.go-mf{background:rgba(59,130,246,.1);color:#2563eb;border:1px solid rgba(59,130,246,.25);}
+.go-cc{background:rgba(168,85,247,.1);color:#7c3aed;border:1px solid rgba(168,85,247,.25);}
+.go-other{background:#f3f4f6;color:var(--parch-dim);border:1px solid #e5e7eb;}
+
+/* 3-species panels */
+.sppanels{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.sppanel{background:var(--ink3);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);padding:13px;display:flex;flex-direction:column;gap:8px;}
+.sppanel.unavail{opacity:.35;}
+.sph{display:flex;align-items:center;gap:7px;margin-bottom:2px;}
+.spbadge{font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px;flex-shrink:0;}
+.spname{font-family:var(--serif);font-size:11px;font-style:italic;color:var(--parch-dim);line-height:1.2;}
+.spname strong{font-style:normal;font-family:var(--mono);font-size:9px;color:var(--parchment);display:block;}
+.mini-fw{width:100%;aspect-ratio:0.6;}
+.mini-fw svg{width:100%;height:100%;overflow:visible;}
+.mtp{transition:fill .25s,opacity .25s;opacity:.2;}
+.mtp.expr{opacity:.9;}
+.mtp.ant-c{fill:#c47a1e;} .mtp.sty-c{fill:#5a9e78;} .mtp.ov-c{fill:#4a8fa8;}
+.sp-gid{font-family:var(--mono);font-size:9.5px;color:var(--parchment);word-break:break-all;}
+.sp-nodata{font-family:var(--mono);font-size:10px;color:var(--parch-dim);opacity:.4;text-align:center;padding:8px 0;}
+.sp-mrow{display:flex;align-items:center;gap:5px;margin-bottom:3px;}
+.sp-mdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sp-mname{font-family:var(--mono);font-size:10px;color:var(--parchment);}
+.sp-krow{display:flex;align-items:center;gap:5px;margin-bottom:5px;}
+.sp-klbl{font-family:var(--mono);font-size:9px;color:var(--parch-dim);min-width:20px;}
+.sp-ktrk{flex:1;height:3px;background:var(--ink);border-radius:2px;overflow:hidden;}
+.sp-kfil{height:100%;border-radius:2px;}
+.sp-kval{font-family:var(--mono);font-size:9px;color:var(--parch-dim);min-width:28px;text-align:right;}
+.sp-stg{font-family:var(--mono);font-size:9px;color:var(--parch-dim);margin-bottom:5px;}
+.spl{display:inline-block;padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:9px;}
+.s-F0{background:rgba(136,120,184,.15);color:var(--f0);} .s-F1{background:rgba(91,143,216,.15);color:var(--f1);} .s-F2{background:rgba(212,160,48,.15);color:var(--f2);} .s-F3{background:rgba(200,96,96,.15);color:var(--f3);}
+.sp-degs{display:flex;flex-direction:column;gap:2px;}
+.sp-drow{display:flex;justify-content:space-between;font-family:var(--mono);font-size:8.5px;padding:2px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.sp-drow:last-child{border-bottom:none;}
+
+/* WGCNA detail */
+.wgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:9px;}
+.wpan{background:var(--ink3);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);padding:13px;}
+.wp-tiss{font-family:var(--mono);font-size:9px;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;gap:5px;margin-bottom:9px;}
+.wp-mod{font-family:var(--mono);font-size:14px;color:var(--parchment);margin-bottom:7px;display:flex;align-items:center;gap:7px;}
+.wp-mdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.krow{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+.klbl{font-family:var(--mono);font-size:9px;color:var(--parch-dim);min-width:22px;}
+.ktrk{flex:1;height:3px;background:var(--ink);border-radius:2px;overflow:hidden;}
+.kfil{height:100%;border-radius:2px;}
+.kval{font-family:var(--mono);font-size:9.5px;color:var(--parch-dim);min-width:32px;text-align:right;}
+.hub-list{display:flex;flex-wrap:wrap;gap:3px;margin-top:5px;}
+.hub-tag{font-family:var(--mono);font-size:9.5px;padding:2px 6px;border-radius:4px;background:var(--parch-ghost);border:1px solid rgba(255,255,255,.08);color:var(--parch-dim);cursor:pointer;transition:all .15s;}
+.hub-tag:hover{color:var(--gold);border-color:var(--gold-line);}
+.hub-self{color:var(--gold);border-color:var(--gold-line);background:var(--gold-dim);}
+
+/* DESeq2 table */
+.deqt{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11px;}
+.deqt th{text-align:left;color:var(--parch-dim);font-weight:400;font-size:9px;text-transform:uppercase;letter-spacing:.07em;padding:5px 9px;border-bottom:1px solid rgba(255,255,255,.07);}
+.deqt td{padding:6px 9px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:middle;}
+.deqt tr:last-child td{border-bottom:none;}
+.deqt tr:hover td{background:var(--parch-ghost);}
+.lfc-wrap{display:flex;align-items:center;gap:6px;}
+.lfc-trk{width:65px;height:3px;background:var(--ink);border-radius:2px;position:relative;}
+.lfc-ctr{position:absolute;left:50%;top:-1px;width:1px;height:5px;background:rgba(255,255,255,.15);}
+.lfc-bar{position:absolute;top:0;height:3px;border-radius:2px;}
+
+/* ABOUT */
+.about-wrap{max-width:760px;margin:0 auto;padding:5rem 2rem 8rem;}
+.about-title{font-family:var(--serif);font-size:clamp(48px,5vw,72px);font-weight:300;line-height:.96;letter-spacing:-.02em;color:var(--parchment);margin-bottom:.6rem;}
+.about-title em{color:var(--gold);font-style:italic;}
+.about-lead{font-family:var(--serif);font-size:18px;font-weight:300;color:var(--parch-dim);font-style:italic;margin-bottom:2.5rem;}
+.about-intro{font-size:18px;color:var(--parch-dim);line-height:1.85;margin-bottom:4rem;padding-bottom:3rem;border-bottom:1px solid #edf0f5;}
+.about-section{margin-bottom:3.5rem;}
+.about-block-label{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--sage);margin-bottom:1.2rem;display:flex;align-items:center;gap:10px;}
+.about-block-label::before{content:'';width:24px;height:1px;background:var(--sage);}
+.about-h2{font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;color:var(--parchment);margin-bottom:1rem;}
+.about-p{color:var(--parch-dim);line-height:1.85;font-size:17px;margin-bottom:.8rem;}
+.about-p strong{color:var(--parchment);font-weight:500;}
+.tissue-row{display:flex;gap:1.5rem;margin:1.2rem 0;}
+.tissue-dot{display:flex;align-items:center;gap:7px;font-size:16px;color:var(--parchment);font-family:var(--sans);}
+.tissue-dot::before{content:'';width:10px;height:10px;border-radius:50%;background:var(--c);flex-shrink:0;}
+.stage-row{display:flex;gap:8px;margin:1.2rem 0 1.5rem;}
+.stage-pill{font-family:var(--mono);font-size:13px;padding:6px 14px;border-radius:4px;border:1px solid #e5e7eb;color:var(--parch-dim);background:#fafbfc;display:flex;gap:6px;align-items:baseline;}
+.stage-pill strong{color:var(--parchment);font-weight:600;}
+.pipeline-steps{display:flex;flex-direction:column;gap:0;margin:1rem 0;}
+.pipe-step{display:flex;align-items:baseline;gap:1.5rem;padding:10px 0;border-bottom:1px solid #f3f4f6;}
+.pipe-step:last-child{border-bottom:none;}
+.pipe-tool{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--parchment);min-width:180px;}
+.pipe-desc{font-size:16px;color:var(--parch-dim);}
+.sp-list{display:flex;flex-direction:column;gap:0;margin:1rem 0;}
+.sp-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #f3f4f6;font-size:14px;}
+.sp-item:last-child{border-bottom:none;}
+.sp-item.live{}
+.cite-box{background:#fafbfc;border-left:3px solid var(--gold);padding:16px 20px;margin-top:1rem;font-family:var(--mono);font-size:12px;color:var(--parch-dim);line-height:2;}
+.sp-ab{font-family:var(--mono);font-size:10px;min-width:28px;text-align:center;padding:2px 0;color:var(--gold);background:var(--gold-dim);border-radius:4px;}
+.sp-sci{font-style:italic;color:var(--parch-dim);}
+.sp-stat{margin-left:auto;font-family:var(--mono);font-size:10px;}
+.live-s{color:var(--sage);} .soon-s{color:var(--parch-dim);}
+.cite-box{background:var(--ink3);border:1px solid rgba(255,255,255,.07);border-left:3px solid var(--gold-line);border-radius:var(--r);padding:15px 18px;margin-top:1rem;font-family:var(--mono);font-size:12px;color:var(--parch-dim);line-height:1.8;}
+
+::-webkit-scrollbar{width:5px;} ::-webkit-scrollbar-track{background:var(--ink);} ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px;}
+@media(max-width:900px){.sppanels{grid-template-columns:1fr 1fr;}.drw{width:100%;}.sp-chips{display:none;}}
+@media(max-width:560px){.sppanels{grid-template-columns:1fr;}}
+
+/* ── MOBILE ─────────────────────────────────────────────── */
+@media(max-width:768px){
+  /* header */
+  .hdr{padding:0 1rem;}
+  .hdr-in{height:56px;}
+  .logo-name{font-size:18px;}
+  .logo-sub{display:none;}
+  .hdr-nav{gap:3px;}
+  .nbtn{font-size:11px;padding:4px 10px;}
+  .sp-chips{display:none;}
+
+  /* hero */
+  .hero{padding:2.5rem 1.2rem 2rem;min-height:auto;}
+  .hero::after{display:none;} /* hide GREAT watermark on mobile */
+  .hero-content{max-width:100%;}
+  .hero-ey{font-size:10px;margin-bottom:.8rem;}
+  .hero-title{font-size:clamp(38px,10vw,56px);margin-bottom:2rem;}
+  .srch-wrap{max-width:100%;}
+  .srch{font-size:14px;padding:12px 80px 12px 38px;}
+  .srch-btn{font-size:10px;padding:6px 12px;}
+  .pills{gap:5px;}
+  .pill{font-size:10px;padding:4px 10px;}
+  .hero-stats{gap:1.2rem;margin-top:1.5rem;flex-wrap:nowrap;justify-content:flex-start;}
+  .hstat-n{font-size:24px;}
+  .hstat-l{font-size:8px;letter-spacing:.08em;}
+
+  /* results */
+  .res-hdr{padding:.8rem 1rem;}
+  .fbar{padding:.8rem 1rem;}
+  .ggrid{padding:0 1rem;grid-template-columns:1fr;}
+  .sp-tabs{padding:.8rem 1rem 0;}
+
+  /* drawer */
+  .drw{width:100%;border-left:none;border-top:1px solid #e5e7eb;}
+  .drw-body{padding:1.5rem 1.2rem 4rem;}
+  .sppanels{grid-template-columns:repeat(2,1fr) !important;}
+  .d-id{font-size:15px;}
+
+  /* about */
+  .about-wrap{padding:3rem 1.2rem 5rem;}
+  .about-title{font-size:clamp(38px,10vw,56px);}
+  .about-grid{grid-template-columns:1fr;}
+  .stage-row{flex-wrap:wrap;}
+  .sp-list{grid-template-columns:1fr;}
+}
+
+/* OVERVIEW EXPRESSION HEATMAP */
+.ovhm-wrap{margin-bottom:4px;}
+.ovhm-grid{display:grid;gap:3px;}
+.ovhm-colhdrs{display:flex;gap:3px;padding-left:90px;margin-bottom:3px;}
+.ovhm-colhdr{width:36px;text-align:center;font-family:var(--mono);font-size:9px;color:var(--parch-dim);}
+.ovhm-row{display:flex;align-items:center;gap:3px;}
+.ovhm-label{font-family:var(--mono);font-size:9px;color:var(--parch-dim);width:87px;text-align:right;padding-right:8px;white-space:nowrap;flex-shrink:0;}
+.ovhm-cell{width:36px;height:30px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:8px;color:var(--parchment);transition:filter .15s;cursor:default;position:relative;}
+.ovhm-cell:hover{filter:brightness(1.3);}
+.ovhm-cell.nodata{background:var(--ink3)!important;opacity:.3;}
+.ovhm-legend{display:flex;align-items:center;gap:7px;margin-top:9px;}
+.ovhm-lgbar{height:7px;width:100px;border-radius:3px;}
+.ovhm-lglbl{font-family:var(--mono);font-size:9px;color:var(--parch-dim);}
+.dl-grid{display:flex;flex-direction:column;gap:10px;margin-top:1rem;}
+.dl-card{display:flex;align-items:center;gap:16px;padding:16px 20px;border:1px solid #e5e7eb;border-radius:var(--r-lg);background:#fff;transition:border-color .2s,box-shadow .2s;}
+.dl-card:hover{border-color:var(--gold);box-shadow:0 4px 12px rgba(217,119,6,.08);}
+.dl-sp-badge{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:5px;font-weight:500;flex-shrink:0;}
+.dl-info{flex:1;}
+.dl-name{font-family:var(--serif);font-size:17px;font-weight:400;color:var(--parchment);margin-bottom:3px;}
+.dl-desc{font-size:12px;color:var(--parch-dim);margin-bottom:4px;}
+.dl-meta{font-family:var(--mono);font-size:10px;color:var(--parch-dim);opacity:.7;}
+.dl-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;padding:7px 16px;border-radius:4px;background:var(--parchment);color:#fff;text-decoration:none;transition:background .18s;flex-shrink:0;}
+.dl-btn:hover{background:var(--gold);}
+@media(max-width:640px){.dl-card{flex-wrap:wrap;}.dl-btn{width:100%;justify-content:center;}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="logo" onclick="showHome()">
+      <svg class="logo-mark" viewBox="0 0 36 36" fill="none">
+        <ellipse cx="18" cy="10" rx="4.5" ry="9" fill="#c9a84c" opacity=".22"/>
+        <ellipse cx="18" cy="10" rx="4.5" ry="9" fill="#c9a84c" opacity=".22" transform="rotate(72 18 18)"/>
+        <ellipse cx="18" cy="10" rx="4.5" ry="9" fill="#c9a84c" opacity=".22" transform="rotate(144 18 18)"/>
+        <ellipse cx="18" cy="10" rx="4.5" ry="9" fill="#c9a84c" opacity=".22" transform="rotate(216 18 18)"/>
+        <ellipse cx="18" cy="10" rx="4.5" ry="9" fill="#c9a84c" opacity=".22" transform="rotate(288 18 18)"/>
+        <ellipse cx="12" cy="14" rx="3" ry="5" fill="#c47a1e" opacity=".8"/>
+        <ellipse cx="24" cy="14" rx="3" ry="5" fill="#c47a1e" opacity=".8"/>
+        <ellipse cx="18" cy="12" rx="2.8" ry="4.8" fill="#c47a1e" opacity=".8"/>
+        <line x1="18" y1="19" x2="18" y2="26" stroke="#6a9e7f" stroke-width="1.8" stroke-linecap="round"/>
+        <ellipse cx="18" cy="27.5" rx="3.5" ry="2" fill="#6a9e7f" opacity=".8"/>
+        <ellipse cx="18" cy="30" rx="4" ry="3" fill="none" stroke="#4a8fa8" stroke-width="1.2"/>
+      </svg>
+      <div>
+        <span class="logo-name">GREAT Atlas</span>
+        <span class="logo-sub">Genetics and genomics of REproductive systems in plAnTs</span>
+      </div>
+    </div>
+    <nav class="hdr-nav">
+      <button class="nbtn on" id="nav-home" onclick="showHome()">Home</button>
+      <button class="nbtn" id="nav-downloads" onclick="showDownloads()">Downloads</button>
+      <button class="nbtn" id="nav-about" onclick="showAbout()">About</button>
+    </nav>
+    <div class="sp-chips">
+      <span class="spch on">S. melongena</span>
+      <span class="spch on">C. intybus</span>
+      <span class="spch on">C. scolymus</span>
+      <span class="spch on">S. lycopersicum</span>
+    </div>
+  </div>
+</header>
+
+<!-- HOME -->
+<div class="page on" id="page-home">
+  <div class="hero">
+    <div class="hero-content">
+      <p class="hero-ey">Transcriptomic Atlas</p>
+      <h1 class="hero-title">Floral gene<br>expression<br><em>across species</em></h1>
+      <div class="srch-wrap">
+        <svg class="srch-ico" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M13 13L17 17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        <input class="srch" id="heroSearch" type="text" placeholder="Gene ID, function or GO term — e.g. SMEL5_07g020840, MYB, pollen tube" autocomplete="off" spellcheck="false">
+        <button class="srch-btn" onclick="(function(){const q=document.getElementById('heroSearch').value.trim();if(q){resetFilters();runSearch(q);}})()">Search</button>
+      </div>
+      <div class="pills">
+        <button class="pill" onclick="ts('MADS')">MADS</button>
+        <button class="pill" onclick="ts('pollen')">pollen</button>
+        <button class="pill" onclick="ts('tapetum')">tapetum</button>
+        <button class="pill" onclick="ts('apetala')">apetala</button>
+        <button class="pill" onclick="ts('auxin')">auxin</button>
+        <button class="pill" onclick="ts('gibberellin')">gibberellin</button>
+      </div>
+      <div class="hero-stats">
+        <div><span class="hstat-n" id="statGenes">—</span><span class="hstat-l">genes indexed</span></div>
+        <div><span class="hstat-n">4</span><span class="hstat-l">species</span></div>
+        <div><span class="hstat-n">3</span><span class="hstat-l">dev. stages</span></div>
+        <div><span class="hstat-n">3</span><span class="hstat-l">tissues</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="page" id="page-results">
+  <div class="res-hdr">
+    <div>
+      <button class="back-btn" onclick="showHome()">← back</button>
+      <div class="res-q">Results for <span id="qLabel"></span></div>
+    </div>
+    <span class="fcount" id="fcount"></span>
+  </div>
+
+  <!-- species tabs -->
+  <div class="sp-tabs">
+    <button class="sptab on" id="tab-all" onclick="setSpTab('all')">
+      All species
+    </button>
+    <button class="sptab" id="tab-smel" onclick="setSpTab('smel')">
+      <span class="sptab-dot" style="background:#c9a84c"></span>S. melongena
+    </button>
+    <button class="sptab" id="tab-cic" onclick="setSpTab('cic')">
+      <span class="sptab-dot" style="background:#7bc05a"></span>C. intybus
+    </button>
+    <button class="sptab" id="tab-cyn" onclick="setSpTab('cyn')">
+      <span class="sptab-dot" style="background:#6496dc"></span>C. scolymus
+    </button>
+    <button class="sptab" id="tab-slyc" onclick="setSpTab('slyc')">
+      <span class="sptab-dot" style="background:#e07050"></span>S. lycopersicum
+    </button>
+  </div>
+
+  <!-- flower filter -->
+  <div class="fbar">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div class="fsvg-box" id="fsvg-box">
+        <!-- SVG swaps per tab -->
+        <svg id="filter-svg" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">
+          <!-- botanical illustration background -->
+          <image id="fp-img" href="smel.svg" x="0" y="0" width="210" height="297" opacity="0.55" pointer-events="none"/>
+          <!-- white silhouette bg -->
+          <g id="fp-bg" fill="white" opacity="0.0" pointer-events="none">
+            <path id="fp-bg-sty"  d="m 98.164051,130.40772 h 11.822679 l -1.43305,-17.19662 -2.86611,-5.01568 -1.43305,-8.956579 0.35827,-4.657418 1.43305,-11.106152 v -9.314836 l 2.8661,-2.507843 -1.43305,-14.330518 -0.71653,-6.448732 1.07479,-5.732209 -0.35826,-6.806996 v -5.015682 l 1.43305,-3.224366 1.79334,-0.70779 1.77332,-2.153306 -1.26665,-3.419957 -3.16663,-3.293292 -2.9133,-0.886656 -2.27997,-0.379995 c 0,0 -2.65997,1.139986 -3.166627,1.393316 -0.506661,0.25333 -2.786633,1.899976 -2.786633,1.899976 l -2.279971,5.319933 1.393315,2.279973 1.899978,1.773312 c 0,0 1.139984,3.419956 1.139984,4.053281 0,0.633326 0.379997,5.319933 0.379997,6.079924 0,0.759992 0.379994,8.993222 0.379994,8.993222 l -0.25333,5.826593 -0.126664,7.219911 0.25333,7.853235 3.546617,3.799951 0.63333,10.133208 -0.25333,12.413178 -1.64665,9.119884 -2.659964,5.4466 -0.633325,9.87988 -0.126664,8.61322 z"/>
+            <path id="fp-bg-sty2" d=""/>
+            <path id="fp-bg-ant"  d="m 87.345982,62.622858 c -3.531875,3.803557 -3.667718,3.803557 -3.667718,3.803557 l -2.173459,10.052259 -1.630098,12.361563 0.815049,10.731466 2.580986,8.829687 1.901778,2.58098 2.852668,-1.76593 2.03762,4.21108 2.445144,1.08673 1.765938,-4.61861 3.124351,3.12435 2.988509,-2.71682 4.21108,-11.003149 v -7.742957 l 2.71683,21.462926 2.44514,0.81505 1.76594,-2.71682 1.22257,-4.75445 c 0,0 0.54337,4.75445 1.08673,5.70534 0.54337,0.95088 2.30931,2.3093 2.30931,2.3093 l 3.53187,-3.66772 1.76594,0.81505 3.12435,-4.89029 2.44514,-10.459783 -0.13584,-10.45978 -0.95089,-8.286324 -2.71682,-11.818197 -2.98852,-3.26019 -1.90177,1.630095 -0.67921,-2.173462 c 0,0 -1.6301,-0.271682 -1.90178,0.271685 -0.27168,0.543364 -3.9394,7.742954 -3.9394,7.742954 l -2.71683,1.358413 c 0,0 -2.17345,1.086731 -2.3093,1.765938 -0.13584,0.679206 -2.03762,6.792068 -2.03762,6.792068 l -4.6186,-7.742957 -2.988511,0.543364 -2.988511,-8.558003 -2.580984,-2.03762 -1.358413,-0.135842 -0.815049,1.222573 z"/>
+            <path id="fp-bg-ov"   d="m 102.58603,125.63907 c -3.073742,11.52652 -3.073742,11.52652 -3.073742,11.52652 l -3.457956,3.84217 -4.22639,16.13713 -1.53687,9.60543 3.073739,9.60543 5.379042,6.5317 4.226387,1.53687 10.37387,-11.52652 1.92109,-9.60544 -3.07374,-14.21604 -2.68952,-8.837 -3.84217,-4.6106 -2.30531,-5.37905 z"/>
+          </g>
+          <!-- interactive tissue paths -->
+          <path id="tp-sty"  class="tp tp-sty" onclick="flowerClick('stami')"  d="m 98.164051,130.40772 h 11.822679 l -1.43305,-17.19662 -2.86611,-5.01568 -1.43305,-8.956579 0.35827,-4.657418 1.43305,-11.106152 v -9.314836 l 2.8661,-2.507843 -1.43305,-14.330518 -0.71653,-6.448732 1.07479,-5.732209 -0.35826,-6.806996 v -5.015682 l 1.43305,-3.224366 1.79334,-0.70779 1.77332,-2.153306 -1.26665,-3.419957 -3.16663,-3.293292 -2.9133,-0.886656 -2.27997,-0.379995 c 0,0 -2.65997,1.139986 -3.166627,1.393316 -0.506661,0.25333 -2.786633,1.899976 -2.786633,1.899976 l -2.279971,5.319933 1.393315,2.279973 1.899978,1.773312 c 0,0 1.139984,3.419956 1.139984,4.053281 0,0.633326 0.379997,5.319933 0.379997,6.079924 0,0.759992 0.379994,8.993222 0.379994,8.993222 l -0.25333,5.826593 -0.126664,7.219911 0.25333,7.853235 3.546617,3.799951 0.63333,10.133208 -0.25333,12.413178 -1.64665,9.119884 -2.659964,5.4466 -0.633325,9.87988 -0.126664,8.61322 z"/>
+          <path id="tp-sty2" class="tp tp-sty" onclick="flowerClick('stami')"  d=""/>
+          <path id="tp-ant"  class="tp tp-ant" onclick="flowerClick('antera')" d="m 87.345982,62.622858 c -3.531875,3.803557 -3.667718,3.803557 -3.667718,3.803557 l -2.173459,10.052259 -1.630098,12.361563 0.815049,10.731466 2.580986,8.829687 1.901778,2.58098 2.852668,-1.76593 2.03762,4.21108 2.445144,1.08673 1.765938,-4.61861 3.124351,3.12435 2.988509,-2.71682 4.21108,-11.003149 v -7.742957 l 2.71683,21.462926 2.44514,0.81505 1.76594,-2.71682 1.22257,-4.75445 c 0,0 0.54337,4.75445 1.08673,5.70534 0.54337,0.95088 2.30931,2.3093 2.30931,2.3093 l 3.53187,-3.66772 1.76594,0.81505 3.12435,-4.89029 2.44514,-10.459783 -0.13584,-10.45978 -0.95089,-8.286324 -2.71682,-11.818197 -2.98852,-3.26019 -1.90177,1.630095 -0.67921,-2.173462 c 0,0 -1.6301,-0.271682 -1.90178,0.271685 -0.27168,0.543364 -3.9394,7.742954 -3.9394,7.742954 l -2.71683,1.358413 c 0,0 -2.17345,1.086731 -2.3093,1.765938 -0.13584,0.679206 -2.03762,6.792068 -2.03762,6.792068 l -4.6186,-7.742957 -2.988511,0.543364 -2.988511,-8.558003 -2.580984,-2.03762 -1.358413,-0.135842 -0.815049,1.222573 z"/>
+          <path id="tp-ov"   class="tp tp-ov"  onclick="flowerClick('ovaio')"  d="m 102.58603,125.63907 c -3.073742,11.52652 -3.073742,11.52652 -3.073742,11.52652 l -3.457956,3.84217 -4.22639,16.13713 -1.53687,9.60543 3.073739,9.60543 5.379042,6.5317 4.226387,1.53687 10.37387,-11.52652 1.92109,-9.60544 -3.07374,-14.21604 -2.68952,-8.837 -3.84217,-4.6106 -2.30531,-5.37905 z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="tlabels">
+          <div class="tlbl" id="tl-antera" onclick="flowerClick('antera')"><span class="tldot" style="background:#c47a1e"></span>Anther<span class="tlcnt" id="tc-antera"></span></div>
+          <div class="tlbl" id="tl-stami"  onclick="flowerClick('stami')"><span class="tldot" style="background:#5a9e78"></span>Style/Stigma<span class="tlcnt" id="tc-stami"></span></div>
+          <div class="tlbl" id="tl-ovaio"  onclick="flowerClick('ovaio')"><span class="tldot" style="background:#4a8fa8"></span>Ovary<span class="tlcnt" id="tc-ovaio"></span></div>
+        </div>
+        <button class="freset hide" id="freset" onclick="flowerReset()">× clear</button>
+      </div>
+    </div>
+    <div class="fright">
+      <div class="fgrp">
+        <span class="flbl">Stage</span>
+        <div class="ftw" id="stageF">
+          <button class="ftgl on" data-v="all">All</button>
+          <button class="ftgl" data-v="T1">T1</button>
+          <button class="ftgl" data-v="T2">T2</button>
+          <button class="ftgl" data-v="T3">T3</button>
+        </div>
+      </div>
+      <div class="fgrp">
+        <span class="flbl">Show</span>
+        <div class="ftw" id="sigF">
+          <button class="ftgl on" data-v="all">All</button>
+          <button class="ftgl" data-v="deg">DEG only</button>
+          <button class="ftgl" data-v="conserved">Conserved</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ggrid" id="geneGrid"></div>
+</div>
+
+<!-- DOWNLOADS -->
+<div class="page" id="page-downloads">
+  <div class="about-wrap">
+    <h1 class="about-title"><em>Downloads</em></h1>
+    <p class="about-lead">Genome annotations used in this atlas</p>
+    <p class="about-intro">The following GFF3 files contain the annotated genome assemblies used for functional characterisation of differentially expressed genes. Gene coordinates, product descriptions and functional annotations were extracted from these files and integrated into the atlas. Functional annotations were derived from homology-based searches against UniProtKB/Swiss-Prot using eggNOG-mapper.</p>
+
+    <div class="about-section">
+      <div class="about-block-label">Genome annotations — GFF3</div>
+      <h2 class="about-h2">Files</h2>
+
+      <div class="dl-grid">
+
+        <div class="dl-card">
+          <div class="dl-sp-badge" style="background:rgba(123,192,90,.12);color:#7bc05a;border:1px solid rgba(123,192,90,.3)">Ci</div>
+          <div class="dl-info">
+            <div class="dl-name"><em>Cichorium intybus</em></div>
+            <div class="dl-desc">Annotated GFF3 — chicory floral transcriptome reference</div>
+            <div class="dl-meta">Format: GFF3 &nbsp;·&nbsp; Annotation: eggNOG-mapper + UniProtKB</div>
+          </div>
+          <a class="dl-btn" href="downloads/Cichorium_intybus.gff3" download>
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 3v10M10 13l-4-4M10 13l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Download
+          </a>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-sp-badge" style="background:rgba(100,150,220,.12);color:#6496dc;border:1px solid rgba(100,150,220,.3)">Cs</div>
+          <div class="dl-info">
+            <div class="dl-name"><em>Cynara cardunculus</em></div>
+            <div class="dl-desc">Annotated GFF3 — globe artichoke floral transcriptome reference</div>
+            <div class="dl-meta">Format: GFF3 &nbsp;·&nbsp; Annotation: eggNOG-mapper + UniProtKB</div>
+          </div>
+          <a class="dl-btn" href="downloads/Cynara_cardunculus.gff3" download>
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 3v10M10 13l-4-4M10 13l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Download
+          </a>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-sp-badge" style="background:rgba(224,112,80,.12);color:#e07050;border:1px solid rgba(224,112,80,.3)">Sl</div>
+          <div class="dl-info">
+            <div class="dl-name"><em>Solanum lycopersicum</em></div>
+            <div class="dl-desc">Annotated GFF3 — tomato floral transcriptome reference</div>
+            <div class="dl-meta">Format: GFF3 &nbsp;·&nbsp; Annotation: eggNOG-mapper + UniProtKB</div>
+          </div>
+          <a class="dl-btn" href="downloads/Solanum_lycopersicum.gff3" download>
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 3v10M10 13l-4-4M10 13l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Download
+          </a>
+        </div>
+
+        <div class="dl-card">
+          <div class="dl-sp-badge" style="background:rgba(201,168,76,.12);color:#c9a84c;border:1px solid rgba(201,168,76,.3)">Sm</div>
+          <div class="dl-info">
+            <div class="dl-name"><em>Solanum melongena</em></div>
+            <div class="dl-desc">Annotated GFF3 — eggplant floral transcriptome reference</div>
+            <div class="dl-meta">Format: GFF3 &nbsp;·&nbsp; Annotation: eggNOG-mapper + UniProtKB</div>
+          </div>
+          <a class="dl-btn" href="downloads/Solanum_melongena.gff3" download>
+            <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 3v10M10 13l-4-4M10 13l4-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 17h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Download
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="about-section">
+      <div class="about-block-label">License</div>
+      <h2 class="about-h2">Terms of use</h2>
+      <div class="cite-box">
+        These files are made available for academic and non-commercial research use. If you use these annotations in your work, please cite:<br><br>
+        Martina M. et al. — <em>Manuscript in preparation</em><br><br>
+        This work was partially supported by the <strong>"GREAT: Genetics and genomics of REproductive systems in plAnTs"</strong> project, PRIN 2022 (Grant code: <strong>2022EZMYWP</strong>).
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="page" id="page-about">
+  <div class="about-wrap">
+
+    <h1 class="about-title"><em>GREAT</em> Atlas</h1>
+    <p class="about-lead">Genetics and genomics of REproductive systems in plAnTs</p>
+    <p class="about-intro">This atlas integrates RNA-seq data across key reproductive developmental stages in four plant species, providing a unified interface to explore differential expression, cross-species conservation and functional annotations.</p>
+
+    <!-- Experimental design -->
+    <div class="about-section">
+      <div class="about-block-label">Experimental design</div>
+      <h2 class="about-h2">Tissues &amp; Stages</h2>
+      <div class="tissue-row">
+        <span class="tissue-dot" style="--c:#f97316">Anther</span>
+        <span class="tissue-dot" style="--c:#059669">Style / Stigma</span>
+        <span class="tissue-dot" style="--c:#0ea5e9">Ovary</span>
+      </div>
+      <div class="stage-row">
+        <div class="stage-pill"><strong>T1</strong> gametogenesis</div>
+        <div class="stage-pill"><strong>T2</strong> anthesis</div>
+        <div class="stage-pill"><strong>T3</strong> post-pollination</div>
+      </div>
+      <p class="about-p">Three biological replicates per condition.</p>
+    </div>
+
+    <!-- Analysis pipeline -->
+    <div class="about-section">
+      <div class="about-block-label">Analysis pipeline</div>
+      <h2 class="about-h2">Methods</h2>
+      <div class="pipeline-steps">
+        <div class="pipe-step"><span class="pipe-tool">Salmon + tximport</span><span class="pipe-desc">Read quantification</span></div>
+        <div class="pipe-step"><span class="pipe-tool">DESeq2</span><span class="pipe-desc">Differential expression</span></div>
+        <div class="pipe-step"><span class="pipe-tool">OrthoFinder</span><span class="pipe-desc">Orthology inference</span></div>
+        <div class="pipe-step"><span class="pipe-tool">Fisher's method</span><span class="pipe-desc">Cross-species conservation</span></div>
+      </div>
+    </div>
+
+    <!-- Species -->
+    <div class="about-section">
+      <div class="about-block-label">Species</div>
+      <div class="sp-list">
+        <div class="sp-item live"><span class="sp-ab" style="background:rgba(201,168,76,.15);color:#c9a84c;border:1px solid rgba(201,168,76,.3);font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px;">Sm</span><span class="sp-sci" style="font-style:italic;font-family:var(--serif);font-size:15px">Solanum melongena</span><span class="sp-stat live-s" style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--sage)">● Available</span></div>
+        <div class="sp-item live"><span class="sp-ab" style="background:rgba(123,192,90,.15);color:#7bc05a;border:1px solid rgba(123,192,90,.3);font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px;">Ci</span><span class="sp-sci" style="font-style:italic;font-family:var(--serif);font-size:15px">Cichorium intybus</span><span class="sp-stat live-s" style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--sage)">● Available</span></div>
+        <div class="sp-item live"><span class="sp-ab" style="background:rgba(100,150,220,.15);color:#6496dc;border:1px solid rgba(100,150,220,.3);font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px;">Cs</span><span class="sp-sci" style="font-style:italic;font-family:var(--serif);font-size:15px">Cynara scolymus</span><span class="sp-stat live-s" style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--sage)">● Available</span></div>
+        <div class="sp-item live"><span class="sp-ab" style="background:rgba(224,112,80,.15);color:#e07050;border:1px solid rgba(224,112,80,.3);font-family:var(--mono);font-size:10px;padding:2px 7px;border-radius:4px;">Sl</span><span class="sp-sci" style="font-style:italic;font-family:var(--serif);font-size:15px">Solanum lycopersicum</span><span class="sp-stat live-s" style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--sage)">● Available</span></div>
+      </div>
+    </div>
+
+    <!-- Citation -->
+    <div class="about-section">
+      <div class="about-block-label">Citation</div>
+      <h2 class="about-h2">Reference</h2>
+      <div class="cite-box">
+        Martina M. et al. — <em>Manuscript in preparation</em><br><br>
+        This work was partially supported by the <strong>"GREAT: Genetics and genomics of REproductive systems in plAnTs"</strong> project, in the framework of the PRIN 2022 (Research Projects of National Relevance) funding of the Italian Ministry of University and Research (MUR).<br>
+        Grant code: <strong>2022EZMYWP</strong> — PI: Prof. Gianni Barcaccia (Università di Padova)<br>
+        Research Units: Univ. Padova · Univ. della Tuscia · Univ. di Torino
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="ovl" id="ovl" onclick="closeDrawer()"></div>
+<aside class="drw" id="drw">
+  <button class="drw-close" onclick="closeDrawer()">✕</button>
+  <div class="drw-body" id="drwBody"></div>
+</aside>
+
+<script>
+/* ═══════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════ */
+const MC = {turquoise:'#1a8a7e',blue:'#2e62b8',brown:'#8a5a22',yellow:'#c8a020',green:'#2d8a3e',red:'#9e2e2e',black:'#3a3a3a',pink:'#b84080',magenta:'#8a2ab8',purple:'#5c2a9e',greenyellow:'#5a9e1a',tan:'#9e7a3a',salmon:'#c85a3a',cyan:'#1a8a9e',midnightblue:'#1a2e6e',lightcyan:'#3aaabf',grey60:'#666',lightgreen:'#3ab85a',lightyellow:'#bfc040',royalblue:'#3050b8',darkred:'#6e1010',darkgreen:'#1a5e2a',darkorange:'#c86010',violet:'#7030b0',skyblue:'#3a90c8',steelblue:'#4682b4',coral1:'#c85050',orangered:'#c83010',plum:'#9a309a'};
+
+const SP_CFG = {
+  smel:{ abbr:'Sm', full:'Solanum melongena',    color:'#c9a84c', available:true,
+          tissues:['antera','ovaio','stami'],
+          tissueLabels:{antera:'Anther',ovaio:'Ovary',stami:'Style/Stigma'},
+          svgViewBox:'0 0 210 297',
+          svgPaths:{
+            antera: `m 87.345982,62.622858 c -3.531875,3.803557 -3.667718,3.803557 -3.667718,3.803557 l -2.173459,10.052259 -1.630098,12.361563 0.815049,10.731466 2.580986,8.829687 1.901778,2.58098 2.852668,-1.76593 2.03762,4.21108 2.445144,1.08673 1.765938,-4.61861 3.124351,3.12435 2.988509,-2.71682 4.21108,-11.003149 v -7.742957 l 2.71683,21.462926 2.44514,0.81505 1.76594,-2.71682 1.22257,-4.75445 c 0,0 0.54337,4.75445 1.08673,5.70534 0.54337,0.95088 2.30931,2.3093 2.30931,2.3093 l 3.53187,-3.66772 1.76594,0.81505 3.12435,-4.89029 2.44514,-10.459783 -0.13584,-10.45978 -0.95089,-8.286324 -2.71682,-11.818197 -2.98852,-3.26019 -1.90177,1.630095 -0.67921,-2.173462 c 0,0 -1.6301,-0.271682 -1.90178,0.271685 -0.27168,0.543364 -3.9394,7.742954 -3.9394,7.742954 l -2.71683,1.358413 c 0,0 -2.17345,1.086731 -2.3093,1.765938 -0.13584,0.679206 -2.03762,6.792068 -2.03762,6.792068 l -4.6186,-7.742957 -2.988511,0.543364 -2.988511,-8.558003 -2.580984,-2.03762 -1.358413,-0.135842 -0.815049,1.222573 z`,
+            style:  `m 96.417557,162.6477 1.561418,4.2939 2.732485,2.73248 0.39035,2.60237 1.56142,1.17106 0.39035,2.34213 1.56142,1.82165 2.99272,7.28662 0.26023,1.17106 2.86261,-9.10827 1.30118,-1.17106 0.13012,-3.38308 1.82165,-1.04094 0.52047,-2.47225 2.08189,-1.4313 0.13012,-2.47224 1.56142,-1.95177 -3.25296,-17.56596 -1.69153,-15.61418 -1.04095,-17.43583 -0.52047,-39.295684 0.26024,-30.187413 1.04094,-7.416736 2.21201,-3.383071 1.17106,-6.505908 1.04095,-6.636027 2.73248,-4.684253 -1.56142,-1.4313 -1.82165,-0.910827 -3.77343,1.821654 c 0,0 -4.16378,8.197444 -4.16378,8.717917 0,0.520472 -0.78071,7.156498 -0.78071,8.067326 0,0.910826 -0.78071,3.383071 -0.78071,3.383071 0,0 -1.95177,-8.327561 -1.69153,-8.848034 0.26023,-0.520473 -1.17107,-7.156499 -1.17107,-7.156499 l -2.8626,-4.554135 -4.163778,-1.691537 -1.821653,1.301182 -1.431301,0.780709 c 0,0 -0.130117,0.650591 0.650592,1.691536 0.780709,1.040945 2.602362,7.286617 2.602362,8.067326 0,0.780709 -0.650592,5.985437 0.13012,6.766145 0.780708,0.780709 2.212006,4.424016 2.862598,5.204725 0.65059,0.780711 1.69154,5.334846 1.69154,5.334846 l 1.17106,7.026381 -0.91083,58.683286 -2.08189,35.26203 -2.602361,17.04548 z`,
+            stigma: ``,
+            ovary:  `m 102.58603,125.63907 c -3.073742,11.52652 -3.073742,11.52652 -3.073742,11.52652 l -3.457956,3.84217 -4.22639,16.13713 -1.53687,9.60543 3.073739,9.60543 5.379042,6.5317 4.226387,1.53687 10.37387,-11.52652 1.92109,-9.60544 -3.07374,-14.21604 -2.68952,-8.837 -3.84217,-4.6106 -2.30531,-5.37905 z`
+          },
+          svgTissueMap:{ antera:['anther','anther2'], stami:['style','stigma'], ovaio:['ovary'] }
+  },
+  cic:{  abbr:'Ci', full:'Cichorium intybus',    color:'#7bc05a', available:true,
+          tissues:['antera','ovaio','stigma_stilo'],
+          tissueLabels:{antera:'Anther',ovaio:'Ovary',stigma_stilo:'Style/Stigma'},
+          svgViewBox:'0 0 210 297',
+          svgPaths:{
+            anther: `m 94.112158,113.55525 -1.709978,0.94999 -0.696659,1.89997 -0.949986,-0.75999 -0.823325,0.12667 -0.949987,0.31666 -0.633325,0.63333 v 2.08997 c 0,0 -0.25333,0.75999 -0.25333,1.01332 0,0.25333 0.633325,2.78663 0.633325,2.78663 l 1.26665,5.2566 0.443328,3.41996 0.569992,4.05328 4.686609,6.64992 1.139987,-3.16663 3.799951,4.49661 1.58331,-3.22996 h 1.70998 l 1.07666,3.54663 4.55994,-5.06661 0.75999,3.1033 c 0,0 2.84996,-5.31994 3.10329,-5.4466 0.25333,-0.12667 4.05329,-16.3398 4.05329,-16.3398 l -0.88666,-3.29329 -1.64665,-0.88665 -0.63332,0.12666 -1.26665,-1.51998 -2.27997,0.12667 -2.08998,4.81327 -1.58331,0.37999 -1.51998,2.9133 -1.83664,17.09979 -1.77332,-0.0633 -0.63332,-12.53984 -2.089974,-7.15658 -2.153309,-0.56999 -0.696656,-3.60995 -1.836645,-2.08998 z`,
+            style:  `m 98.798768,119.57184 2.026642,6.20659 c 0,0 0.31666,4.11662 0.50666,4.36995 0.19,0.25333 0.88665,9.05655 0.88665,9.05655 l 1.58332,-0.0633 0.31666,-6.58659 0.75999,-7.09324 1.89998,-5.4466 -0.12667,-5.69993 -0.37999,-9.75321 -0.25333,-7.66324 0.0633,-1.203318 0.75999,-5.699929 c 0,0 2.40664,-4.496609 2.5333,-4.813273 0.12667,-0.316662 1.32998,-1.709979 1.32998,-1.709979 l 2.65997,-0.316663 0.82332,2.279972 -0.63332,1.203317 -1.20332,-0.823322 c 0,0 0.69666,-0.823323 0.44333,-0.886656 -0.25333,-0.06333 -0.82332,1.139986 -0.82332,1.519981 0,0.379997 0.69665,1.519981 0.94998,1.519981 0.25333,0 2.02664,-0.316661 2.02664,-0.316661 l 0.88666,-2.279973 V 82.96563 l -1.51998,-1.456647 -1.83664,-0.443328 -2.65997,0.443328 -1.13999,1.139986 c 0,0 -1.77331,1.899976 -1.96331,2.216639 -0.18999,0.316662 -1.58331,2.849962 -1.58331,2.849962 l -0.82332,0.94999 -1.26665,4.243281 c 0,0 -1.20332,-2.786634 -1.20332,-3.229962 0,-0.443328 -1.39332,-4.433276 -1.39332,-4.433276 l -1.329981,-2.406637 -3.039962,-1.963309 -1.583314,-0.316663 h -1.773309 l -2.21664,1.139986 -0.696658,2.153306 0.696658,3.229959 1.583312,0.443328 c 0,0 1.583314,0.06333 1.709981,-0.189997 0.126664,-0.253331 0.633325,-2.27997 0.633325,-2.27997 l -1.646647,0.25333 -0.75999,-1.583314 1.139984,-1.076653 1.393317,0.569992 c 0,0 2.406637,1.139986 2.46997,1.456648 0.06333,0.316663 1.139987,5.129937 1.139987,5.383268 0,0.25333 0.696655,3.483289 0.696655,4.053281 0,0.569992 0.379998,6.079922 0.316664,6.333252 -0.06333,0.25333 -0.06333,6.14326 -0.06333,6.14326 l 0.06333,7.66324 z`,
+            ovary:  `m 97.089263,196.14897 -2.50784,3.76176 -0.895659,5.55308 -0.179131,1.79131 0.358264,7.70266 0.179131,5.55307 1.612183,5.01569 1.433052,5.19481 0.895657,1.97044 4.12003,2.32871 2.50784,-0.53739 2.68697,-1.61218 1.97044,-5.55308 1.79132,-7.52352 1.07479,-7.52352 v -5.01569 l -1.79132,-6.98612 -1.97044,-3.4035 -0.35827,-0.71653 -3.94089,0.5374 -3.76176,-0.35827 z`
+          },
+          svgTissueMap:{ antera:['anther'], stigma_stilo:['style'], ovaio:['ovary'] }
+  },
+  cyn:{  abbr:'Cs', full:'Cynara scolymus',      color:'#6496dc', available:true,
+          tissues:['antera','ovaio','stami'],
+          tissueLabels:{antera:'Anther',ovaio:'Ovary',stami:'Style/Stigma'},
+          svgViewBox:'0 0 210 297',
+          svgPaths:{
+            anther: `m 101.10181,112.55221 -5.334844,-4.55414 -2.212007,-5.7252 -0.780711,-6.245668 -1.301182,-8.717915 V 76.50948 l 0.520473,-8.717918 -0.390353,-9.368507 0.780709,-10.279335 -0.780709,-6.766144 1.040945,-1.691537 2.732482,-1.040945 1.431297,-0.520472 3.51319,-0.390356 0.78071,-0.260236 12.10099,0.260236 4.81437,0.910828 2.08189,1.040945 1.95177,1.171064 0.52048,50.095491 -1.30118,11.190166 -0.78071,5.33484 -2.73248,1.69154 -3.25296,2.47224 -1.69154,0.91083 z`,
+            style:  `m 96.417557,162.6477 1.561418,4.2939 2.732485,2.73248 0.39035,2.60237 1.56142,1.17106 0.39035,2.34213 1.56142,1.82165 2.99272,7.28662 0.26023,1.17106 2.86261,-9.10827 1.30118,-1.17106 0.13012,-3.38308 1.82165,-1.04094 0.52047,-2.47225 2.08189,-1.4313 0.13012,-2.47224 1.56142,-1.95177 -3.25296,-17.56596 -1.69153,-15.61418 -1.04095,-17.43583 -0.52047,-39.295684 0.26024,-30.187413 1.04094,-7.416736 2.21201,-3.383071 1.17106,-6.505908 1.04095,-6.636027 2.73248,-4.684253 -1.56142,-1.4313 -1.82165,-0.910827 -3.77343,1.821654 c 0,0 -4.16378,8.197444 -4.16378,8.717917 0,0.520472 -0.78071,7.156498 -0.78071,8.067326 0,0.910826 -0.78071,3.383071 -0.78071,3.383071 0,0 -1.95177,-8.327561 -1.69153,-8.848034 0.26023,-0.520473 -1.17107,-7.156499 -1.17107,-7.156499 l -2.8626,-4.554135 -4.163778,-1.691537 -1.821653,1.301182 -1.431301,0.780709 c 0,0 -0.130117,0.650591 0.650592,1.691536 0.780709,1.040945 2.602362,7.286617 2.602362,8.067326 0,0.780709 -0.650592,5.985437 0.13012,6.766145 0.780708,0.780709 2.212006,4.424016 2.862598,5.204725 0.65059,0.780711 1.69154,5.334846 1.69154,5.334846 l 1.17106,7.026381 -0.91083,58.683286 -2.08189,35.26203 -2.602361,17.04548 z`,
+            ovary:  `m 85.747867,159.26463 2.472245,4.81437 1.561418,-1.82165 0.780711,0.39035 1.301181,-1.69153 1.821654,1.56141 1.691537,-0.13011 2.862598,4.94448 2.472249,2.86261 c 0,0 0.39035,1.56141 0.39035,2.08189 0,0.52047 1.69154,1.17106 1.69154,1.17106 l 0.26023,2.47224 1.82166,2.08189 2.47224,6.63603 0.26024,2.34213 1.4313,-5.98544 0.39035,-1.17106 1.30119,-2.8626 1.4313,-0.78071 0.39035,-3.38307 1.56142,-1.17107 0.26023,-2.212 1.95178,-1.56142 0.39035,-2.34213 1.04095,-1.04094 1.69153,-2.86261 2.47225,-0.39035 1.04094,-1.30118 2.47225,1.82165 1.69153,1.56142 2.08189,-4.42401 1.69154,11.19016 v 10.66969 l -1.56142,7.15649 -2.73248,5.46497 -3.90354,5.33484 -5.07461,4.03366 -10.53957,5.85532 -13.79253,-9.62874 -4.424016,-6.24567 -3.773426,-9.62875 -0.520473,-8.5878 v -6.63602 z`
+          },
+          svgTissueMap:{ antera:['anther'], stami:['style'], ovaio:['ovary'] }
+  },
+  slyc:{ abbr:'Sl', full:'Solanum lycopersicum', color:'#e07050', available:true,
+          tissues:['antera','ovaio','stami'],
+          tissueLabels:{antera:'Anther',ovaio:'Ovary',stami:'Style/Stigma'},
+          svgViewBox:'0 0 210 297',
+          svgPaths:{
+            antera: `m 87.345982,62.622858 c -3.531875,3.803557 -3.667718,3.803557 -3.667718,3.803557 l -2.173459,10.052259 -1.630098,12.361563 0.815049,10.731466 2.580986,8.829687 1.901778,2.58098 2.852668,-1.76593 2.03762,4.21108 2.445144,1.08673 1.765938,-4.61861 3.124351,3.12435 2.988509,-2.71682 4.21108,-11.003149 v -7.742957 l 2.71683,21.462926 2.44514,0.81505 1.76594,-2.71682 1.22257,-4.75445 c 0,0 0.54337,4.75445 1.08673,5.70534 0.54337,0.95088 2.30931,2.3093 2.30931,2.3093 l 3.53187,-3.66772 1.76594,0.81505 3.12435,-4.89029 2.44514,-10.459783 -0.13584,-10.45978 -0.95089,-8.286324 -2.71682,-11.818197 -2.98852,-3.26019 -1.90177,1.630095 -0.67921,-2.173462 c 0,0 -1.6301,-0.271682 -1.90178,0.271685 -0.27168,0.543364 -3.9394,7.742954 -3.9394,7.742954 l -2.71683,1.358413 c 0,0 -2.17345,1.086731 -2.3093,1.765938 -0.13584,0.679206 -2.03762,6.792068 -2.03762,6.792068 l -4.6186,-7.742957 -2.988511,0.543364 -2.988511,-8.558003 -2.580984,-2.03762 -1.358413,-0.135842 -0.815049,1.222573 z`,
+            style:  `m 96.417557,162.6477 1.561418,4.2939 2.732485,2.73248 0.39035,2.60237 1.56142,1.17106 0.39035,2.34213 1.56142,1.82165 2.99272,7.28662 0.26023,1.17106 2.86261,-9.10827 1.30118,-1.17106 0.13012,-3.38308 1.82165,-1.04094 0.52047,-2.47225 2.08189,-1.4313 0.13012,-2.47224 1.56142,-1.95177 -3.25296,-17.56596 -1.69153,-15.61418 -1.04095,-17.43583 -0.52047,-39.295684 0.26024,-30.187413 1.04094,-7.416736 2.21201,-3.383071 1.17106,-6.505908 1.04095,-6.636027 2.73248,-4.684253 -1.56142,-1.4313 -1.82165,-0.910827 -3.77343,1.821654 c 0,0 -4.16378,8.197444 -4.16378,8.717917 0,0.520472 -0.78071,7.156498 -0.78071,8.067326 0,0.910826 -0.78071,3.383071 -0.78071,3.383071 0,0 -1.95177,-8.327561 -1.69153,-8.848034 0.26023,-0.520473 -1.17107,-7.156499 -1.17107,-7.156499 l -2.8626,-4.554135 -4.163778,-1.691537 -1.821653,1.301182 -1.431301,0.780709 c 0,0 -0.130117,0.650591 0.650592,1.691536 0.780709,1.040945 2.602362,7.286617 2.602362,8.067326 0,0.780709 -0.650592,5.985437 0.13012,6.766145 0.780708,0.780709 2.212006,4.424016 2.862598,5.204725 0.65059,0.780711 1.69154,5.334846 1.69154,5.334846 l 1.17106,7.026381 -0.91083,58.683286 -2.08189,35.26203 -2.602361,17.04548 z`,
+            ovary:  `m 102.58603,125.63907 c -3.073742,11.52652 -3.073742,11.52652 -3.073742,11.52652 l -3.457956,3.84217 -4.22639,16.13713 -1.53687,9.60543 3.073739,9.60543 5.379042,6.5317 4.226387,1.53687 10.37387,-11.52652 1.92109,-9.60544 -3.07374,-14.21604 -2.68952,-8.837 -3.84217,-4.6106 -2.30531,-5.37905 z`
+          },
+          svgTissueMap:{ antera:['stamen'], stami:['style_stigma'], ovaio:['ovary'] }
+  }
+};
+
+// tissue key normaliser — maps any species tissue key to canonical display key
+const TISSUE_NORM = {
+  antera:'antera', anther:'antera', stamen:'antera',
+  ovaio:'ovaio', ovary:'ovaio',
+  stami:'stami', stigma_stilo:'stami',
+  'style+stamen':'stami', 'style+stigma':'stami',
+  style_stamen:'stami', style_stigma:'stami',
+  stigma:'stami', style:'stami'
+};
+
+const ORTHOLOGS = {
+  // filled when OrthoFinder finishes
+  // "SMEL5_07g020840": { cic:"gene-L2E82_xxxxx", cyn:"2C_xxgxxxxxx" }
+};
+</script>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA LOADING — async fetch from JSON files
+═══════════════════════════════════════════ */
+const ATLAS = { smel:{}, cic:{}, cyn:{}, slyc:{} };
+const SIDX  = { smel:{}, cic:{}, cyn:{}, slyc:{} };
+const FIDX  = { smel:{}, cic:{}, cyn:{}, slyc:{} };
+let dataReady = false;
+
+// Strip version suffix (.1 .2 etc) from gene IDs for consistent lookup
+function stripVer(id){ return String(id).replace(/\.\d+$/, ''); }
+
+async function loadData() {
+  document.getElementById('geneGrid').innerHTML = '<div class="smsg"><div class="spin"></div>Loading gene database…</div>';
+  try {
+    function normalizeStageKeys(g) {
+      // Rename deseq contrast keys: F0→T0 F1→T1 F2→T2 F3→T3
+      if(g.deseq && typeof g.deseq === 'object') {
+        const deseq = {};
+        Object.entries(g.deseq).forEach(([c,d]) => {
+          deseq[c.replace(/\bF([0-3])\b/g, 'T$1')] = d;
+        });
+        g.deseq = deseq;
+      }
+      // Same for basemean keys
+      if(g.basemean && typeof g.basemean === 'object') {
+        const bm = {};
+        Object.entries(g.basemean).forEach(([k,v]) => {
+          bm[k.replace(/\bF([0-3])\b/g, 'T$1')] = v;
+        });
+        g.basemean = bm;
+      }
+      return g;
+    }
+
+    function normalizeGeneMap(data){
+      if(!data) return {};
+      if(data.genes && typeof data.genes === 'object' && !Array.isArray(data.genes)) data = data.genes;
+      if(Array.isArray(data)){
+        const out = {};
+        data.forEach(g => {
+          if(g && typeof g === 'object' && g.id){
+            const key = stripVer(g.id);
+            out[key] = Object.assign({}, g, {id: key});
+          }
+        });
+        return out;
+      }
+      if(typeof data === 'object'){
+        const entries = Object.entries(data).filter(([k,v]) => v && typeof v === 'object');
+        const out = {};
+        entries.forEach(([k,v]) => {
+          const key = stripVer(k);
+          out[key] = Object.assign({}, v, {id: key});
+        });
+        return out;
+      }
+      return {};
+    }
+
+    const safe = url => fetch(url).then(r=>r.json()).catch(()=>{ console.warn(url+' not found'); return {}; });
+
+    const [sm, ci, cy, sl, smi, cii, cyi, sli, cicMap, smFunc, ciFunc, cyFunc, slFunc] = await Promise.all([
+      // Load chunked atlas files in parallel and merge
+      Promise.all([1,2,3].map(i=>fetch(`data/smel_atlas_data_${i}.json`).then(r=>r.json()))).then(chunks=>Object.assign({},...chunks)),
+      Promise.all([1,2,3].map(i=>fetch(`data/cic_atlas_data_${i}.json`).then(r=>r.json()))).then(chunks=>Object.assign({},...chunks)),
+      Promise.all([1,2,3].map(i=>fetch(`data/cyn_atlas_data_${i}.json`).then(r=>r.json()))).then(chunks=>Object.assign({},...chunks)),
+      Promise.all([1,2,3].map(i=>fetch(`data/slyc_atlas_data_${i}.json`).then(r=>r.json()))).then(chunks=>Object.assign({},...chunks)),
+      fetch('data/smel_search_index.json').then(r=>r.json()),
+      fetch('data/cic_search_index.json').then(r=>r.json()),
+      fetch('data/cyn_search_index.json').then(r=>r.json()),
+      fetch('data/slyc_search_index.json').then(r=>r.json()),
+      safe('data/cic_id_map.json'),
+      safe('data/smel_func.json'),
+      safe('data/cic_func.json'),
+      safe('data/cyn_func.json'),
+      safe('data/slyc_func.json'),
+    ]);
+
+    // Store GFF product description in gff_func (separate from GO terms in func)
+    function applyFunc(atlas, funcMap) {
+      Object.entries(atlas).forEach(([id, g]) => {
+        if(g && funcMap[id]) g.gff_func = funcMap[id];
+      });
+    }
+
+    ATLAS.smel = normalizeGeneMap(sm);
+    applyFunc(ATLAS.smel, smFunc);
+
+    ATLAS.cyn  = normalizeGeneMap(cy);
+    applyFunc(ATLAS.cyn, cyFunc);
+
+    ATLAS.slyc = normalizeGeneMap(sl);
+    applyFunc(ATLAS.slyc, slFunc);
+
+    // Remap cic keys: gene-L2E82_xxxxx → KAI3xxxxxx, then enrich func
+    const cicRaw = normalizeGeneMap(ci);
+    ATLAS.cic = {};
+    let cicRemapped = 0, cicMissing = 0;
+    Object.entries(cicRaw).forEach(([geneKey, geneObj]) => {
+      const kai = cicMap[geneKey];
+      if(kai) {
+        const enriched = Object.assign({}, geneObj, {id: kai, _origId: geneKey});
+        if(ciFunc[kai]) enriched.gff_func = ciFunc[kai];
+        ATLAS.cic[kai] = enriched;
+        cicRemapped++;
+      } else {
+        ATLAS.cic[geneKey] = geneObj;
+        cicMissing++;
+      }
+    });
+    console.log(`CIC remap: ${cicRemapped} → KAI3, ${cicMissing} kept original key`);
+
+    // Use precompiled index if available, rebuild only if missing
+    SIDX.smel = (smi && !Array.isArray(smi) && typeof smi==='object' && Object.keys(smi).length) ? smi : buildIdx(ATLAS.smel,'smel');
+    SIDX.cic  = (cii && !Array.isArray(cii) && typeof cii==='object' && Object.keys(cii).length) ? cii : buildIdx(ATLAS.cic,'cic');
+    SIDX.cyn  = (cyi && !Array.isArray(cyi) && typeof cyi==='object' && Object.keys(cyi).length) ? cyi : buildIdx(ATLAS.cyn,'cyn');
+    SIDX.slyc = (sli && !Array.isArray(sli) && typeof sli==='object' && Object.keys(sli).length) ? sli : buildIdx(ATLAS.slyc,'slyc');
+
+    // Build lightweight gff_func index
+    FIDX.smel = {}; FIDX.cic = {}; FIDX.cyn = {}; FIDX.slyc = {};
+    ['smel','cic','cyn','slyc'].forEach(sp => {
+      Object.entries(ATLAS[sp]).forEach(([id, g]) => {
+        if(!g || !g.gff_func) return;
+        g.gff_func.toLowerCase().split(/[^a-z0-9]+/).filter(w=>w.length>=3).forEach(w => {
+          if(!FIDX[sp][w]) FIDX[sp][w] = [];
+          FIDX[sp][w].push(id);
+        });
+      });
+    });
+    console.log('FIDX built — smel:', Object.keys(FIDX.smel).length, 'cic:', Object.keys(FIDX.cic).length, 'cyn:', Object.keys(FIDX.cyn).length, 'slyc:', Object.keys(FIDX.slyc).length);
+
+    const nSm = Object.keys(ATLAS.smel).length;
+    const nCi = Object.keys(ATLAS.cic).length;
+    const nCy = Object.keys(ATLAS.cyn).length;
+    const nSl = Object.keys(ATLAS.slyc).length;
+    const total = nSm + nCi + nCy + nSl;
+
+    console.log('Loaded atlas genes:', { smel:nSm, cic:nCi, cyn:nCy, slyc:nSl, total });
+    document.getElementById('statGenes').textContent = total.toLocaleString();
+    dataReady = true;
+    document.getElementById('geneGrid').innerHTML = '';
+  } catch(e) {
+    document.getElementById('geneGrid').innerHTML = '<div class="smsg">Could not load gene data. Make sure JSON files are in the data folder.</div>';
+    console.error(e);
+  }
+}
+
+function buildIdx(atlas, sp) {
+  const idx = {};
+  const add = (k,id) => {
+    if(!k) return;
+    if(!idx[k]) idx[k]=[];
+    if(!idx[k].includes(id)) idx[k].push(id);
+  };
+  Object.entries(atlas||{}).forEach(([gid,g]) => {
+    if(!g || typeof g!=='object') return;
+    add(String(gid).toLowerCase(), gid);
+    const txt = [
+      g.id || '',
+      g.symbol || '',
+      g.name || '',
+      g.description || '',
+      g.product || '',
+      g.func || '',
+      g.gff_func || '',
+      g.search_text || ''
+    ].join(' ').toLowerCase();
+    txt.split(/[^a-z0-9_+.:-]+/).filter(w=>w.length>=3).forEach(w=>add(w,gid));
+    Object.values(g.wgcna||{}).forEach(w=>{ if(w&&w.module) add('module:'+String(w.module).toLowerCase(), gid); });
+  });
+  return idx;
+}
+
+loadData();
+</script>
+
+<script>
+/* ═══════════════════════════════════════════
+   APP STATE & ROUTING
+═══════════════════════════════════════════ */
+const ST = { stage:'all', tissue:'all', sig:'all', query:'', spTab:'all' };
+
+function showHome()      { setPage('home');      setNav('nav-home'); }
+function showDownloads() { setPage('downloads'); setNav('nav-downloads'); }
+function showAbout()     { setPage('about');     setNav('nav-about'); }
+function setPage(id) { document.querySelectorAll('.page').forEach(p=>p.classList.remove('on')); document.getElementById('page-'+id).classList.add('on'); }
+function setNav(id)  { document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on'));  document.getElementById(id).classList.add('on'); }
+
+/* species tab */
+function setSpTab(sp) {
+  ST.spTab = sp;
+  document.querySelectorAll('.sptab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+sp).classList.add('on');
+  updateFilterSvg(sp);
+  if(ST.query) runSearch(ST.query);
+}
+
+function updateFilterSvg(sp) {
+  const svgEl = document.getElementById('filter-svg');
+  if(!svgEl) return;
+  // all species use same viewBox now
+  svgEl.setAttribute('viewBox', '0 0 210 297');
+  // swap background illustration
+  const imgEl = document.getElementById('fp-img');
+  const spCode = sp==='all' ? 'smel' : sp;
+  if(imgEl) imgEl.setAttribute('href', spCode+'.svg');
+
+  const ant  = document.getElementById('tp-ant');
+  const sty  = document.getElementById('tp-sty');
+  const sty2 = document.getElementById('tp-sty2');
+  const ov   = document.getElementById('tp-ov');
+  const bgAnt  = document.getElementById('fp-bg-ant');
+  const bgSty  = document.getElementById('fp-bg-sty');
+  const bgSty2 = document.getElementById('fp-bg-sty2');
+  const bgOv   = document.getElementById('fp-bg-ov');
+
+  // Helper to set both the colored tp-path and its white bg-path simultaneously
+  function setPath(tpEl, bgEl, d) {
+    if(tpEl) tpEl.setAttribute('d', d);
+    if(bgEl) bgEl.setAttribute('d', d);
+  }
+
+  const spCfg = SP_CFG[spCode];
+  if(!spCfg) return;
+  const px = spCfg.svgPaths;
+  if(spCode==='cic') {
+    setPath(ant,  bgAnt,  px.anther||'');
+    setPath(sty,  bgSty,  px.style||'');
+    setPath(sty2, bgSty2, '');
+    setPath(ov,   bgOv,   px.ovary||'');
+  } else if(spCode==='cyn') {
+    setPath(ant,  bgAnt,  px.anther||'');
+    setPath(sty,  bgSty,  px.style||'');
+    setPath(sty2, bgSty2, '');
+    setPath(ov,   bgOv,   px.ovary||'');
+  } else {
+    // smel: style+stigma is one path in 'style', 'stigma' is empty
+    setPath(ant,  bgAnt,  px.antera||'');
+    setPath(sty,  bgSty,  px.style||'');
+    setPath(sty2, bgSty2, '');
+    setPath(ov,   bgOv,   px.ovary||'');
+  }
+}
+
+/* reset all filters to default — called on new query */
+function resetFilters() {
+  ST.stage = 'all'; ST.sig = 'all'; ST.tissue = 'all';
+  document.getElementById('stageF').querySelectorAll('.ftgl').forEach(b=>{ b.classList.toggle('on', b.dataset.v==='all'); });
+  document.getElementById('sigF').querySelectorAll('.ftgl').forEach(b=>{ b.classList.toggle('on', b.dataset.v==='all'); });
+  updateFlowerUI();
+}
+
+/* search */
+const hs = document.getElementById('heroSearch');
+let dbt;
+// Search only on Enter or explicit trigger — no auto-fire while typing
+hs.addEventListener('keydown', e=>{
+  if(e.key==='Enter'){
+    const q = hs.value.trim();
+    if(q){ clearTimeout(dbt); resetFilters(); runSearch(q); }
+  }
+  if(e.key==='Escape'){ hs.value=''; showHome(); }
+});
+// Paste: short delay to let value settle, then search automatically
+hs.addEventListener('paste', ()=>{
+  clearTimeout(dbt);
+  dbt = setTimeout(()=>{ const q=hs.value.trim(); if(q){ resetFilters(); runSearch(q); } }, 300);
+});
+function ts(q){ hs.value=q; resetFilters(); runSearch(q); }
+
+function runSearch(q) {
+  if(!dataReady){ setTimeout(()=>runSearch(q),300); return; }
+  ST.query=q;
+  const ql=q.toLowerCase();
+  
+  // which species to search
+  const sps = ST.spTab==='all' ? ['smel','cic','cyn','slyc'] : [ST.spTab];
+  
+  let hits = [];
+  sps.forEach(sp=>{
+    const atlas = ATLAS[sp];
+    const idx   = SIDX[sp];
+    let spHits  = new Set();
+    
+    // direct ID match
+    Object.keys(atlas).forEach(id=>{ if(id.toLowerCase().includes(ql)) spHits.add(id); });
+    
+    // token search in precompiled index
+    const tokens = ql.split(/\s+/).filter(t=>t.length>=3);
+    const sets = tokens.map(t=>{
+      const s=new Set();
+    Object.entries(idx).forEach(([k,ids])=>{ 
+      if(k.includes(t)) {
+        if(Array.isArray(ids)) ids.forEach(id=>s.add(id));
+        else if(typeof ids === 'string') s.add(ids);
+      }
+    });
+      return s;
+    });
+    if(sets.length===1) sets[0].forEach(id=>spHits.add(id));
+    else if(sets.length>1){
+      const inter=new Set([...sets[0]].filter(id=>sets.slice(1).every(s=>s.has(id))));
+      if(inter.size) inter.forEach(id=>spHits.add(id));
+      else sets.forEach(s=>s.forEach(id=>spHits.add(id)));
+    }
+
+    // also search gff_func index (lightweight, built at load)
+    if(typeof FIDX !== 'undefined' && FIDX[sp]) {
+      tokens.forEach(t => {
+      Object.entries(FIDX[sp]).forEach(([k,ids])=>{ 
+        if(k.includes(t)) {
+          if(Array.isArray(ids)) ids.forEach(id=>spHits.add(id));
+          else if(typeof ids === 'string') spHits.add(ids);
+        }
+      });
+      });
+    }
+    
+    [...spHits].forEach(id=>{ if(atlas[id]) hits.push({...atlas[id], _sp:sp}); });
+  });
+
+  console.log('[GREAT] runSearch "'+q+'" raw hits:', hits.length, 'ST:', JSON.stringify({stage:ST.stage,sig:ST.sig,tissue:ST.tissue}));
+  _lastHits = hits;
+  setPage('results'); setNav('nav-home');
+  document.getElementById('qLabel').textContent='"'+q+'"';
+  renderResults(hits);
+}
+
+/* filters */
+['stageF','sigF'].forEach(gid=>{
+  const key=gid==='stageF'?'stage':'sig';
+  document.getElementById(gid).querySelectorAll('.ftgl').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.getElementById(gid).querySelectorAll('.ftgl').forEach(b=>b.classList.remove('on'));
+      btn.classList.add('on'); ST[key]=btn.dataset.v;
+      if(_lastHits.length) renderResults(_lastHits);
+    });
+  });
+});
+
+let _lastHits = [];
+
+function applyFilters(results) {
+  const out = results.filter(g=>{
+    if(ST.stage!=='all'){
+      const ok=Object.keys(g.deseq||{}).some(k=>k.includes('_'+ST.stage+'_')||k.endsWith('_'+ST.stage));
+      if(!ok) return false;
+    }
+    if(ST.tissue!=='all'){
+      const tissues = Array.isArray(g.tissues) ? g.tissues : (g.tissues ? [g.tissues] : []);
+      const gTissues = tissues.map(t=>TISSUE_NORM[t]||t);
+      if(!gTissues.includes(ST.tissue)) return false;
+    }
+    if(ST.sig==='deg' && Object.keys(g.deseq||{}).length===0) return false;
+    if(ST.sig==='conserved' && !g.is_conserved) return false;
+    return true;
+  });
+  console.log('[GREAT] applyFilters: in='+results.length+' out='+out.length+' stage='+ST.stage+' sig='+ST.sig+' tissue='+ST.tissue);
+  return out;
+}
+
+/* flower selector */
+function flowerClick(tk){ ST.tissue=ST.tissue===tk?'all':tk; updateFlowerUI(); if(ST.query) runSearch(ST.query); }
+function flowerReset(){ ST.tissue='all'; updateFlowerUI(); if(ST.query) runSearch(ST.query); }
+function updateFlowerUI(){
+  const a=ST.tissue;
+  document.getElementById('freset').classList.toggle('hide',a==='all');
+  ['tp-ant','tp-sty','tp-sty2','tp-ov'].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    el.classList.remove('sel','dim');
+    if(a==='all') return;
+    const mine=(id==='tp-ant'&&a==='antera')||(id==='tp-ov'&&a==='ovaio')||((id==='tp-sty'||id==='tp-sty2')&&a==='stami');
+    el.classList.add(mine?'sel':'dim');
+  });
+  ['antera','stami','ovaio'].forEach(tk=>{
+    const el=document.getElementById('tl-'+tk); if(!el) return;
+    el.classList.remove('sel','dim');
+    if(a==='all') return;
+    el.classList.add(tk===a?'sel':'dim');
+  });
+}
+function updateFlowerCounts(results){
+  ['antera','stami','ovaio'].forEach(tk=>{
+    const cnt=results.filter(g=>{
+      const tissues = Array.isArray(g.tissues) ? g.tissues : (g.tissues ? [g.tissues] : []);
+      return tissues.map(t=>TISSUE_NORM[t]||t).includes(tk);
+    }).length;
+    const el=document.getElementById('tc-'+tk);
+    if(el) el.textContent=cnt>0?'('+cnt+')':'';
+  });
+}
+
+/* render grid — batch rendering, supports 100k+ genes */
+const SP_COLORS = {smel:'#c9a84c',cic:'#7bc05a',cyn:'#6496dc',slyc:'#e07050'};
+let _renderToken = 0;
+
+function buildCard(g, animate) {
+  const el = document.createElement('div');
+  el.className = 'gcard';
+  el.addEventListener('click', ()=>openDrawer(g));
+  const sp  = g._sp || 'smel';
+  const cfg = SP_CFG[sp];
+  const tnames = cfg ? cfg.tissueLabels : {};
+  const tissues = Array.isArray(g.tissues) ? g.tissues : (g.tissues ? [g.tissues] : []);
+  const tBadges = tissues.map(t=>{
+    const norm = TISSUE_NORM[t]||t;
+    const lbl  = {antera:'Anther',ovaio:'Ovary',stami:'Style/Stigma'}[norm] || tnames[norm] || t;
+    return `<span class="tbadge tb-${norm}">${lbl}</span>`;
+  }).join('');
+
+  // Conserved badge
+  const conservedBadge = g.is_conserved
+    ? `<span class="cons-badge" title="Conserved across species (Fisher p<sub>adj</sub>&lt;0.05)">★ Conserved</span>`
+    : '';
+
+  // Fisher LFC chip — from best contrast
+  let fisherChips = '';
+  if(g.is_conserved && g.lfc_card != null && !isNaN(g.lfc_card)){
+    const lfc = g.lfc_card;
+    const dir = g.direction || (lfc > 0 ? 'up' : 'down');
+    const arrow = dir==='up' ? '▲' : (dir==='down' ? '▼' : '~');
+    const cls   = dir==='up' ? 'dup' : 'ddown';
+    const padj  = g.padj_card;
+    fisherChips = `<span class="dchip ${cls}">${arrow} ${Math.abs(lfc).toFixed(1)}</span>`;
+    if(padj != null && !isNaN(padj)){
+      fisherChips += `<span class="dchip" style="background:#f3f4f6;border:1px solid #e5e7eb;color:var(--parch-dim)">${fmtP(padj)}</span>`;
+    }
+  } else {
+    // fallback: DESeq2 chips from individual species
+    fisherChips = Object.entries(g.deseq||{}).slice(0,2).map(([c,d])=>
+      `<span class="dchip ${d.lfc>0?'dup':'ddown'}">${shortC(c,sp)} ${d.lfc>0?'▲':'▼'}${Math.abs(d.lfc).toFixed(1)}</span>`
+    ).join('');
+  }
+
+  const spCol = SP_COLORS[sp]||'#888';
+  el.innerHTML = `
+    <div class="gcard-top">
+      <span class="gcard-id">${g.id}</span>
+      <span class="gcard-sp gt-${sp}" style="background:rgba(${hexRgb(spCol)},.12);color:${spCol}">${cfg?cfg.abbr:sp}</span>
+    </div>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:7px">${tBadges}</div>
+    <div class="gcard-func">${g.gff_func || g.name || g.symbol || '<span style="opacity:.4">No annotation</span>'}</div>
+    <div class="gcard-bot">${conservedBadge}${fisherChips}</div>`;
+  if(animate){
+    el.style.opacity='0'; el.style.transform='translateY(9px)';
+    requestAnimationFrame(()=>{ el.style.transition='opacity .2s ease,transform .2s ease'; el.style.opacity='1'; el.style.transform='translateY(0)'; });
+  }
+  return el;
+}
+
+function renderResults(raw){
+  const results = applyFilters(raw);
+  document.getElementById('fcount').textContent = results.length+' gene'+(results.length!==1?'s':'');
+  updateFlowerCounts(results);
+  const grid = document.getElementById('geneGrid');
+  if(!results.length){ grid.innerHTML='<div class="smsg">No genes found for this query or filter.</div>'; return; }
+  grid.innerHTML = '';
+
+  const token = ++_renderToken;
+  const FIRST = 100, CHUNK = 200;
+
+  // Render first batch synchronously — cards are immediately visible & clickable
+  const frag = document.createDocumentFragment();
+  const firstEnd = Math.min(FIRST, results.length);
+  for(let i=0; i<firstEnd; i++) frag.appendChild(buildCard(results[i], i<20));
+  grid.appendChild(frag);
+
+  if(results.length <= FIRST) return;
+
+  // Stream remaining cards during browser idle time
+  let offset = FIRST;
+  function nextChunk(deadline){
+    if(token !== _renderToken) return; // new search started, abort
+    const f = document.createDocumentFragment();
+    while(offset < results.length && deadline.timeRemaining() > 3){
+      const end = Math.min(offset + CHUNK, results.length);
+      for(let i=offset; i<end; i++) f.appendChild(buildCard(results[i], false));
+      offset = end;
+    }
+    grid.appendChild(f);
+    if(offset < results.length) requestIdleCallback(nextChunk, {timeout:400});
+  }
+  requestIdleCallback(nextChunk, {timeout:400});
+}
+
+/* drawer */
+function openDrawer(g){
+  document.getElementById('drwBody').innerHTML=buildDrawer(g);
+  document.getElementById('drw').classList.add('on');
+  document.getElementById('ovl').classList.add('on');
+  document.body.style.overflow='hidden';
+  document.querySelectorAll('.hub-tag').forEach(t=>{
+    if(t.dataset.self) return;
+    t.addEventListener('click',e=>{
+      e.stopPropagation();
+      const gid=t.dataset.gid, sp=t.dataset.sp||'smel';
+      const gene=ATLAS[sp][gid];
+      if(gene) openDrawer({...gene,_sp:sp});
+    });
+  });
+}
+function closeDrawer(){
+  document.getElementById('drw').classList.remove('on');
+  document.getElementById('ovl').classList.remove('on');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeDrawer(); });
+
+function buildOverviewHeatmap(g, sp){
+  const tissues = Array.isArray(g.tissues) ? g.tissues : (g.tissues ? [g.tissues] : []);
+  if(!tissues.length) return '<div style="font-family:var(--mono);font-size:11px;color:var(--parch-dim);padding:10px;background:#f9fafb;border-radius:var(--r);text-align:center;opacity:.6">No tissue data available</div>';
+  
+  const tissueColors = {
+    antera:'#f97316', anther:'#f97316',
+    stami:'#16a34a', stigma_stilo:'#16a34a', 'style+stamen':'#16a34a', 'style+stigma':'#16a34a',
+    ovaio:'#0284c7', ovary:'#0284c7'
+  };
+  
+  const pills = tissues.map(t=>{
+    const col = tissueColors[t] || '#999';
+    const label = {antera:'Anther',anther:'Anther',ovaio:'Ovary',ovary:'Ovary',stami:'Style/Stigma',stigma_stilo:'Style/Stigma'}[t] || t;
+    return `<div style="display:flex;align-items:center;gap:6px;padding:6px 10px;background:${col}15;border:1px solid ${col}40;border-radius:6px;font-size:11px">
+      <span style="width:8px;height:8px;border-radius:50%;background:${col}"></span>
+      <span style="color:var(--parchment)">${label}</span>
+    </div>`;
+  }).join('');
+  
+  return `<div style="display:flex;gap:6px;flex-wrap:wrap">${pills}</div>`;
+}
+
+
+function buildGOPills(funcStr) {
+  if(!funcStr) return '';
+  // Split on semicolons, clean up
+  const terms = funcStr.split(';').map(t => t.trim()).filter(t => t.length > 2);
+  if(!terms.length) return '';
+
+  // Categorize each term
+  const BP_KEYS = ['process','development','regulation','signaling','transport','metabolism','biosynthesis','catabolism','response','growth','death','division','differentiation','morphogenesis','reproduction','localization','communication','cycle','pathway'];
+  const MF_KEYS = ['binding','activity','catalytic','kinase','transferase','hydrolase','oxidoreductase','receptor','channel','transporter','structural','enzyme','carrier','inhibitor','cofactor'];
+  const CC_KEYS = ['membrane','nucleus','cytoplasm','organelle','ribosome','mitochondri','chloroplast','vacuole','wall','plasma','extracellular','complex','cytoskeleton','golgi','reticulum'];
+
+  const cats = {bp:[], mf:[], cc:[], other:[]};
+  terms.forEach(t => {
+    const tl = t.toLowerCase();
+    if(t.startsWith('GO:')) { cats.other.push(t); return; }
+    if(CC_KEYS.some(k => tl.includes(k)))      cats.cc.push(t);
+    else if(MF_KEYS.some(k => tl.includes(k))) cats.mf.push(t);
+    else if(BP_KEYS.some(k => tl.includes(k))) cats.bp.push(t);
+    else cats.other.push(t);
+  });
+
+  const makePill = (cls, label, icon, items) => {
+    if(!items.length) return '';
+    const termRows = items.map(t => `<div class="go-term">${t}</div>`).join('');
+    return `<div class="go-pill ${cls}">
+      <span>${icon} ${label}</span><span style="opacity:.6;font-size:9px">(${items.length})</span>
+      <div class="go-drop">
+        <div class="go-drop-title">${label}</div>
+        ${termRows}
+      </div>
+    </div>`;
+  };
+
+  const pills = [
+    makePill('go-bp', 'Biological Process', '⬡', cats.bp),
+    makePill('go-mf', 'Molecular Function', '◈', cats.mf),
+    makePill('go-cc', 'Cell Component',     '○', cats.cc),
+    makePill('go-other', 'Other terms',     '·', cats.other),
+  ].join('');
+
+  return pills ? `<div class="go-cats">${pills}</div>` : '';
+}
+
+function buildDrawer(g){
+  const sp=g._sp||'smel';
+  const cfg=SP_CFG[sp];
+  const tnames=cfg?cfg.tissueLabels:{};
+  const spCol=cfg?cfg.color:'#888';
+
+  // tissue pills
+  const tissues = Array.isArray(g.tissues) ? g.tissues : (g.tissues ? [g.tissues] : []);
+  const tPills=tissues.map(t=>{
+    const cols={antera:'var(--anther)',anther:'var(--anther)',ovaio:'var(--ovary)',ovary:'var(--ovary)',stami:'var(--style-c)',stigma_stilo:'var(--style-c)','style+stamen':'var(--style-c)','style+stigma':'var(--style-c)'};
+    const c=cols[t]||'#888';
+    return `<span style="font-family:var(--mono);font-size:11px;padding:3px 11px;border-radius:20px;border:1px solid ${c};color:${c}">${tnames[t]||t}</span>`;
+  }).join('');
+
+  // 4-species cross-species panels
+  const spPanels=['smel','cic','cyn','slyc'].map(spk=>{
+    const sc=SP_CFG[spk];
+    const ortho = (g.orthologs && typeof g.orthologs==='object') ? g.orthologs : {};
+    const rawOrth = spk===sp ? g.id : (ortho[spk]||null);
+    const geneId  = Array.isArray(rawOrth) ? (rawOrth[0]||null) : rawOrth;
+
+    const resolveGeneId = (id, spk) => {
+      if(!id) return null;
+      const atlas = ATLAS[spk]||{};
+      const key = stripVer(id);
+      // direct match
+      if(atlas[key]) return atlas[key];
+      if(atlas[id]) return atlas[id];
+      // Slyc: try adding LOC prefix (gene-101xxx → gene-LOC101xxx)
+      if(spk === 'slyc') {
+        const locKey = key.replace(/^gene-([0-9])/, 'gene-LOC$1');
+        if(atlas[locKey]) return atlas[locKey];
+      }
+      // CIC: gene-L2E82_xxx might be remapped to KAI3 key — search by _origId
+      if(spk === 'cic') {
+        const found = Object.values(atlas).find(g => g._origId === key || g._origId === id);
+        if(found) return found;
+      }
+      return null;
+    };
+    let geneData = resolveGeneId(geneId, spk);
+    const avail=sc.available;
+    const gTissues = Array.isArray(g.tissues) ? g.tissues : (g.tissues ? [g.tissues] : []);
+    const geneDataForHeat = (spk === sp) ? g : geneData;
+    const deseqData = geneDataForHeat ? (geneDataForHeat.deseq || {}) : {};
+
+    if(geneId && !geneData) console.warn(`[CROSS-SP ${spk}] Could not resolve ortholog ID="${geneId}" for gene ${g.id}`);
+
+    const buildLFCTable = (deseq, spk) => {
+      if(!deseq || Object.keys(deseq).length === 0) return '';
+      const contrasts = Object.keys(deseq);
+      const tissueSet = new Set();
+      const contrastsByTissue = {};
+      const stageComparisons = new Set();
+      contrasts.forEach(c => {
+        // Find stage part: last occurrence of _T\d or _F\d
+        const stageMatch = c.match(/^(.+?)_((?:[FT]\d+_vs_[FT]\d+))$/);
+        if(!stageMatch) return;
+        const tissue = stageMatch[1];
+        const stages = stageMatch[2];
+        // Only intra-tissue contrasts (no _vs_ in tissue name after removal)
+        if(tissue.includes('_vs_')) return;
+        tissueSet.add(tissue);
+        stageComparisons.add(stages);
+        if(!contrastsByTissue[tissue]) contrastsByTissue[tissue] = {};
+        contrastsByTissue[tissue][stages] = deseq[c].lfc || 0;
+      });
+      const tList = Array.from(tissueSet).sort();
+      const sList = Array.from(stageComparisons).sort();
+      if(!tList.length || !sList.length) return '';
+      const getLFCColor = lfc => {
+        if(lfc > 1) return '#fee2e2'; if(lfc > 0.5) return '#fecaca'; if(lfc > 0.1) return '#fda29b';
+        if(lfc < -1) return '#dbeafe'; if(lfc < -0.5) return '#bfdbfe'; if(lfc < -0.1) return '#93c5fd';
+        return '#f9fafb';
+      };
+      const getTissueLabel = t => ({
+        antera:'Anther', anther:'Anther', stamen:'Anther',
+        ovaio:'Ovary', ovary:'Ovary',
+        stami:'Style', stigma_stilo:'Style',
+        style_stigma:'Style', style_stamen:'Style'
+      }[t] || t.charAt(0).toUpperCase() + t.slice(1).replace(/_/g,' '));
+      const getStageLabel = s => s.replace(/([FT])(\d+)_vs_([FT])(\d+)/, 'T$4/T$2');
+      let html = `<table style="width:100%;font-size:9px;border-collapse:collapse;margin:6px 0"><tr style="background:#f3f4f6;border-bottom:2px solid #d1d5db"><td style="padding:5px 8px;font-weight:600;border-right:1px solid #d1d5db">Tissue</td>`;
+      sList.forEach(s => { html += `<td style="padding:5px 8px;font-weight:600;text-align:center;border-right:1px solid #d1d5db">${getStageLabel(s)}</td>`; });
+      html += '</tr>';
+      tList.forEach((tissue, idx) => {
+        html += `<tr style="background:${idx%2===0?'#fff':'#f9fafb'}"><td style="padding:5px 8px;font-weight:500;border-right:1px solid #e5e7eb">${getTissueLabel(tissue)}</td>`;
+        sList.forEach(s => {
+          const lfc = contrastsByTissue[tissue]?.[s];
+          if(lfc === undefined) html += `<td style="padding:5px 8px;text-align:center;border-right:1px solid #e5e7eb;color:#999">—</td>`;
+          else html += `<td style="padding:5px 8px;background:${getLFCColor(lfc)};text-align:center;font-weight:500;border-right:1px solid #e5e7eb" title="${lfc.toFixed(2)}">${lfc>0?'+':''}${lfc.toFixed(1)}</td>`;
+        });
+        html += '</tr>';
+      });
+      html += '</table>';
+      return html;
+    };
+
+    const heatmapHTML = buildLFCTable(deseqData, spk);
+    let body='';
+    if(!avail){
+      body='<div class="sp-nodata">Coming soon</div>';
+    } else if(!geneId){
+      body='<div class="sp-nodata">No ortholog</div>';
+    } else {
+      const d=geneData||(spk===sp?g:null);
+      if(!d){ body='<div class="sp-nodata">Ortholog ID found but not loaded</div>'; }
+      else {
+        body+=`<div class="sp-gid">${stripVer(geneId)}</div>`;
+        if(d.gff_func) body+=`<div style="font-family:var(--serif);font-size:11px;font-style:italic;color:var(--parch-dim);line-height:1.4;margin-bottom:6px">${d.gff_func}</div>`;
+        const degs=Object.entries(d.deseq||{}).slice(0,3);
+        if(degs.length){
+          body+='<div class="sp-degs">';
+          degs.forEach(([c,dd])=>body+=`<div class="sp-drow"><span style="color:var(--parch-dim)">${shortC(c,spk)}</span><span style="color:${dd.lfc>0?'var(--up)':'var(--down)'}">${dd.lfc>0?'+':''}${dd.lfc.toFixed(2)}</span></div>`);
+          body+='</div>';
+        }
+      }
+    }
+    return `<div class="sppanel${!avail?' unavail':''}">
+      <div class="sph">
+        <span class="spbadge" style="background:rgba(${hexRgb(sc.color)},.15);color:${sc.color};border:1px solid rgba(${hexRgb(sc.color)},.3)">${sc.abbr}</span>
+        <div class="spname"><strong>${sc.abbr}</strong>${sc.full}</div>
+      </div>
+      ${heatmapHTML}
+      ${body}
+    </div>`;
+  }).join('');
+
+  // Fisher conservation section
+  let fisherHTML = '';
+  const fisherData = g.fisher || {};
+  const fisherEntries = Object.entries(fisherData);
+  if(!fisherEntries.length){
+    fisherHTML = '<div style="font-family:var(--mono);font-size:11px;color:var(--parch-dim);padding:12px;text-align:center;background:#f9fafb;border-radius:var(--r)">Not in a conserved orthogroup.</div>';
+  } else {
+    const SP_FULL = {Cint:'C. intybus',Csco:'C. scolymus',Slyc:'S. lycopersicum',Smel:'S. melongena'};
+    const SP_COL  = {Cint:'#7bc05a',Csco:'#6496dc',Slyc:'#e07050',Smel:'#c9a84c'};
+    const rows = fisherEntries.map(([contrast, fc])=>{
+      const conserved = fc.is_conserved;
+      const padj = fc.padj_fisher;
+      const lfcAll = fc.lfc_all || {};
+      const lfcCells = ['Cint','Csco','Slyc','Smel'].map(spk=>{
+        const lfc = lfcAll[spk];
+        if(lfc == null || isNaN(lfc)) return `<td style="padding:4px 7px;text-align:center;font-family:var(--mono);font-size:9px;color:#ccc">—</td>`;
+        const col = lfc>0?'#ef4444':'#3b82f6';
+        const bg  = lfc>0?'rgba(239,68,68,.07)':'rgba(59,130,246,.07)';
+        return `<td style="padding:4px 7px;text-align:center;font-family:var(--mono);font-size:9px;color:${col};background:${bg}">${lfc>0?'+':''}${lfc.toFixed(2)}</td>`;
+      }).join('');
+      const contrastLabel = fullFisherC(contrast);
+      const rowBg = conserved ? 'rgba(45,122,111,.04)' : 'transparent';
+      const starCell = conserved
+        ? `<td style="padding:4px 7px;text-align:center"><span style="color:var(--sage);font-size:11px">★</span></td>`
+        : `<td style="padding:4px 7px;text-align:center;opacity:.3">·</td>`;
+      return `<tr style="background:${rowBg};border-bottom:1px solid #f3f4f6">
+        ${starCell}
+        <td style="padding:4px 7px;font-family:var(--mono);font-size:9px;color:var(--parchment)">${contrastLabel}</td>
+        <td style="padding:4px 7px;font-family:var(--mono);font-size:9px;color:var(--parch-dim)">${fmtP(padj)}</td>
+        ${lfcCells}
+      </tr>`;
+    }).join('');
+    const spHeaders = ['Cint','Csco','Slyc','Smel'].map(spk=>
+      `<th style="padding:4px 7px;font-family:var(--mono);font-size:9px;text-align:center;color:${SP_COL[spk]}">${spk}</th>`
+    ).join('');
+    fisherHTML = `
+      ${g.hog ? `<div style="font-family:var(--mono);font-size:10px;color:var(--parch-dim);margin-bottom:8px">HOG: <span style="color:var(--parchment)">${g.hog}</span></div>` : ''}
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr style="border-bottom:2px solid #e5e7eb">
+          <th style="padding:4px 7px;font-family:var(--mono);font-size:9px;text-align:center"></th>
+          <th style="padding:4px 7px;font-family:var(--mono);font-size:9px;text-align:left;color:var(--parch-dim)">Contrast</th>
+          <th style="padding:4px 7px;font-family:var(--mono);font-size:9px;text-align:left;color:var(--parch-dim)">p<sub>adj</sub></th>
+          ${spHeaders}
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--parch-dim);margin-top:8px;opacity:.6">★ conserved (p<sub>adj</sub>&lt;0.05, ≥3/4 species concordant) — LFC shown per species</div>`;
+  }
+
+  // DESeq2
+  const de=Object.entries(g.deseq||{});
+  let dHTML='';
+  if(!de.length) dHTML='<div style="font-family:var(--mono);font-size:11px;color:var(--parch-dim);padding:14px;text-align:center;background:var(--ink3);border-radius:var(--r)">Not significant in any contrast.</div>';
+  else{
+    const rows=de.map(([c,d])=>{
+      const lfc=d.lfc||0,abs=Math.abs(lfc),pct=Math.min(abs/8*50,50);
+      const left=lfc>=0?'50%':`${50-pct}%`,col=lfc>=0?'var(--up)':'var(--down)';
+      return `<tr>
+        <td style="color:var(--parchment)">${fullC(c,sp)}</td>
+        <td><div class="lfc-wrap"><div class="lfc-trk"><div class="lfc-ctr"></div><div class="lfc-bar" style="left:${left};width:${pct}%;background:${col}"></div></div><span style="font-family:var(--mono);font-size:11px;color:${col}">${lfc>=0?'+':''}${lfc.toFixed(2)}</span></div></td>
+        <td style="font-family:var(--mono);font-size:10px;color:var(--parch-dim)">${fmtP(d.padj)}</td>
+      </tr>`;
+    }).join('');
+    dHTML=`<table class="deqt"><thead><tr><th>Contrast</th><th>log₂FC</th><th>p<sub>adj</sub></th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+
+  return `
+    <div class="d-id">${g.id}</div>
+    <span class="d-sp" style="background:rgba(${hexRgb(spCol)},.15);color:${spCol};border:1px solid rgba(${hexRgb(spCol)},.3)">${cfg?cfg.full:''}</span>
+    <div class="d-func">${g.gff_func || g.name || g.symbol || 'No functional annotation available'}</div>
+    ${buildGOPills(g.func)}
+    <div class="d-sec">
+      <div class="d-stitle">Expression overview</div>
+      ${buildOverviewHeatmap(g, sp)}
+    </div>
+    <div class="d-sec">
+      <div class="d-stitle">Expressed tissues</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${tPills||'<span style="opacity:.4;font-size:12px">—</span>'}</div>
+    </div>
+    <div class="d-sec">
+      <div class="d-stitle">Cross-species expression — 4 species</div>
+      <div class="sppanels" style="grid-template-columns:repeat(4,1fr)">${spPanels}</div>
+    </div>
+    <div class="d-sec">
+      <div class="d-stitle">Cross-species conservation — Fisher combined test</div>
+      ${fisherHTML}
+    </div>
+    <div class="d-sec">
+      <div class="d-stitle">Differential expression — DESeq2</div>
+      ${dHTML}
+    </div>`;
+}
+
+function buildMiniFlower(sp, tissues, avail, basemean, maxValue){
+  const cfg=SP_CFG[sp];
+  if(!cfg||!avail) return '<div class="mini-fw" style="opacity:.2"><svg viewBox="0 0 100 120"><ellipse cx="50" cy="60" rx="30" ry="40" fill="none" stroke="#d1d5db" stroke-width="1"/></svg></div>';
+  
+  // Se basemean è vuoto, usa opacity bassa
+  if(!basemean || Object.keys(basemean).length === 0){
+    basemean = {};
+  }
+  
+  // Get basemean values
+  const getTissueBasemean = (tissue) => {
+    if(!basemean) return 0;
+    let mappedTissue = tissue;
+    if(tissue === 'anther') mappedTissue = 'antera';
+    if(tissue === 'stamen') mappedTissue = 'antera';
+    if(tissue === 'ovary') mappedTissue = 'ovaio';
+    if(tissue === 'style+stamen') mappedTissue = 'stami';
+    if(tissue === 'style+stigma') mappedTissue = 'stami';
+    if(tissue === 'style_stigma') mappedTissue = 'stami';
+    if(tissue === 'stigma_stilo') mappedTissue = 'stigma_stilo';
+    
+    const f1Key = `${mappedTissue}__T1`;
+    const f2Key = `${mappedTissue}__T2`;
+    const f3Key = `${mappedTissue}__T3`;
+    
+    return basemean[f1Key] || basemean[f2Key] || basemean[f3Key] || 0;
+  };
+  
+  // Get intensity for each tissue (0 to 1) - quantitative opacity
+  const antVal = getTissueBasemean('antera');
+  const styVal = getTissueBasemean('stami');
+  const stigmaVal = getTissueBasemean('stigma_stilo');
+  const ovVal = getTissueBasemean('ovaio');
+  
+  const finalStyVal = stigmaVal > 0 ? stigmaVal : styVal;
+  
+  const safeMaxValue = maxValue && maxValue > 0 ? maxValue : 1;
+  const antOpacity = Math.max(0.05, Math.min(1, antVal / safeMaxValue));
+  const styOpacity = Math.max(0.05, Math.min(1, finalStyVal / safeMaxValue));
+  const ovOpacity = Math.max(0.05, Math.min(1, ovVal / safeMaxValue));
+  
+  const paths=cfg.svgPaths;
+  let svgContent='';
+  if(sp==='smel'){
+    svgContent=`
+      <path fill="#16a34a" opacity="${styOpacity}" d="${paths.stigma||''}"/>
+      <path fill="#16a34a" opacity="${styOpacity}" d="${paths.style||''}"/>
+      <path fill="#f97316" opacity="${antOpacity}" d="${paths.antera||''}"/>
+      <path fill="#0284c7" opacity="${ovOpacity}" d="${paths.ovary||''}"/>`;
+  } else if(sp==='cic'){
+    svgContent=`
+      <path fill="#16a34a" opacity="${styOpacity}" d="${paths.style||''}"/>
+      <path fill="#f97316" opacity="${antOpacity}" d="${paths.anther||''}"/>
+      <path fill="#0284c7" opacity="${ovOpacity}" d="${paths.ovary||''}"/>`;
+  } else if(sp==='cyn'){
+    svgContent=`
+      <path fill="#16a34a" opacity="${styOpacity}" d="${paths.style||''}"/>
+      <path fill="#f97316" opacity="${antOpacity}" d="${paths.anther||''}"/>
+      <path fill="#0284c7" opacity="${ovOpacity}" d="${paths.ovary||''}"/>`;
+  } else if(sp==='slyc'){
+    svgContent=`
+      <path fill="#16a34a" opacity="${styOpacity}" d="${paths.style||''}"/>
+      <path fill="#f97316" opacity="${antOpacity}" d="${paths.antera||''}"/>
+      <path fill="#0284c7" opacity="${ovOpacity}" d="${paths.ovary||''}"/>`;
+  }
+  return `<div class="mini-fw"><svg viewBox="${cfg.svgViewBox}" xmlns="http://www.w3.org/2000/svg">${svgContent}</svg></div>`;
+}
+
+/* helpers */
+function hexRgb(h){ try{const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return `${r},${g},${b}`;}catch{return'128,128,128';} }
+function fmtP(p){ if(p==null)return'—'; if(p<1e-15)return'&lt;10⁻¹⁵'; if(p<0.001){const e=Math.floor(Math.log10(p)),m=(p/Math.pow(10,e)).toFixed(1);return`${m}×10<sup>${e}</sup>`;} return p.toFixed(4); }
+
+const C_SHORT_BASE = {
+  antera_T2_vs_T1:'Ant T2/T1', antera_T3_vs_T1:'Ant T3/T1', antera_T3_vs_T2:'Ant T3/T2',
+  ovaio_T2_vs_T1:'Ov T2/T1',  ovaio_T3_vs_T1:'Ov T3/T1',  ovaio_T3_vs_T2:'Ov T3/T2',
+  stami_T2_vs_T1:'Sty T2/T1', stami_T3_vs_T1:'Sty T3/T1', stami_T3_vs_T2:'Sty T3/T2',
+  stigma_stilo_T3_vs_T2:'Stig T3/T2',
+  ovaio_vs_antera_T1:'Ov/Ant T1', stami_vs_antera_T1:'Sty/Ant T1',
+  ovaio_vs_antera_T2:'Ov/Ant T2', ovaio_vs_antera_T3:'Ov/Ant T3',
+  stami_vs_antera_T2:'Sty/Ant T2', stami_vs_antera_T3:'Sty/Ant T3',
+  T0_vs_T1_pooled:'T0/T1',
+  // Slyc names
+  stamen_T2_vs_T1:'Ant T2/T1', stamen_T3_vs_T1:'Ant T3/T1',
+  ovary_T2_vs_T1:'Ov T2/T1',  ovary_T3_vs_T1:'Ov T3/T1',
+  style_stigma_T3_vs_T2:'Sty T3/T2',
+  // Fisher contrast labels
+  antera_T2vsT1:'Ant T2/T1', ovaio_T2vsT1:'Ov T2/T1',
+  ovaio_T3vsT1:'Ov T3/T1',  stigma_T3vsT2:'Stig T3/T2'
+};
+const C_FULL_BASE = {
+  antera_T2_vs_T1:'Anther: T2 vs T1', antera_T3_vs_T1:'Anther: T3 vs T1', antera_T3_vs_T2:'Anther: T3 vs T2',
+  ovaio_T2_vs_T1:'Ovary: T2 vs T1',  ovaio_T3_vs_T1:'Ovary: T3 vs T1',  ovaio_T3_vs_T2:'Ovary: T3 vs T2',
+  stami_T2_vs_T1:'Style/Stigma: T2 vs T1', stami_T3_vs_T1:'Style/Stigma: T3 vs T1',
+  stigma_stilo_T3_vs_T2:'Style/Stigma: T3 vs T2',
+  ovaio_vs_antera_T1:'Ovary vs Anther — T1', stami_vs_antera_T1:'Style vs Anther — T1',
+  ovaio_vs_antera_T2:'Ovary vs Anther — T2', ovaio_vs_antera_T3:'Ovary vs Anther — T3',
+  stami_vs_antera_T2:'Style vs Anther — T2', stami_vs_antera_T3:'Style vs Anther — T3',
+  T0_vs_T1_pooled:'T0 (pre-gametogenesis) vs T1 pooled',
+  stamen_T2_vs_T1:'Anther: T2 vs T1', stamen_T3_vs_T1:'Anther: T3 vs T1',
+  ovary_T2_vs_T1:'Ovary: T2 vs T1',  ovary_T3_vs_T1:'Ovary: T3 vs T1',
+  style_stigma_T3_vs_T2:'Style/Stigma: T3 vs T2',
+  antera_T2vsT1:'Anther: T2 vs T1', ovaio_T2vsT1:'Ovary: T2 vs T1',
+  ovaio_T3vsT1:'Ovary: T3 vs T1',  stigma_T3vsT2:'Style/Stigma: T3 vs T2'
+};
+function shortC(c,sp){ return C_SHORT_BASE[c]||c; }
+function fullC(c,sp){  return C_FULL_BASE[c]||c;  }
+function fullFisherC(c){ return C_FULL_BASE[c]||c.replace(/_/g,' '); }
+</script>
+
+
+</body>
+</html>
